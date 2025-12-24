@@ -1,43 +1,48 @@
-# Simple workflow for deploying static content to GitHub Pages
+# Nom du workflow qui apparaîtra dans l'onglet Actions de GitHub
 name: Deploy static content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
+  # Déclenche le déploiement lors d'un push sur la branche "main"
   push:
     branches: ["main"]
 
-  # Allows you to run this workflow manually from the Actions tab
+  # Permet de lancer le déploiement manuellement depuis l'interface GitHub
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+# Définit les permissions nécessaires pour que le script puisse publier sur GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+# Évite que plusieurs déploiements ne s'exécutent en même temps
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      # 1. Récupère le code source du dépôt
       - name: Checkout
         uses: actions/checkout@v4
+
+      # 2. Configure l'environnement GitHub Pages
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v4
+
+      # 3. Prépare les fichiers à déployer (ici, tout le contenu du dossier racine)
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
+          # Déploie tout le contenu du répertoire racine (où se trouve votre index.html)
           path: '.'
+
+      # 4. Effectue le déploiement effectif sur les serveurs de GitHub
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
