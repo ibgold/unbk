@@ -26,14 +26,15 @@
         input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         
         .slider-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
-        .slider-container img { flex: 0 0 100%; scroll-snap-align: start; width: 100%; object-fit: cover; }
+        .slider-container img { flex: 0 0 100%; scroll-snap-align: start; width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body class="pb-24 overflow-x-hidden min-h-screen text-white">
     <div class="bg-grain"></div>
 
+    <!-- CONNEXION -->
     <div id="view-login" class="view active flex min-h-screen w-full flex-col items-center justify-center p-8 text-center text-white">
-        <div class="w-full max-w-sm fade-in flex flex-col items-center">
+        <div class="w-full max-w-sm fade-in flex flex-col items-center text-white">
             <div class="flex flex-col items-center mb-12">
                 <div class="w-20 h-20 bg-[#0BB005] rounded-3xl flex items-center justify-center rotate-3 shadow-[0_0_40px_rgba(11,176,5,0.3)] mb-6 text-black"><i data-lucide="shield-check" class="w-10 h-10"></i></div>
                 <h1 class="text-4xl italic tracking-tighter text-white">UNBREAKABLE</h1>
@@ -47,10 +48,11 @@
         </div>
     </div>
 
+    <!-- APP PRINCIPALE -->
     <div id="main-app" class="view">
         <header class="px-6 py-6 flex justify-between items-center sticky top-0 z-50 bg-black/50 backdrop-blur-xl border-b border-white/5">
             <div class="flex items-center gap-3"><div class="w-9 h-9 bg-white rounded-xl flex items-center justify-center text-black"><i data-lucide="zap" class="w-5 h-5 fill-current"></i></div><span class="font-impact text-xl italic">UNBREAKABLE</span></div>
-            <div class="flex gap-2">
+            <div class="flex gap-2 text-white">
                 <button id="btn-admin-access" onclick="openCoachMode()" class="hidden px-4 py-2 bg-[#0BB005]/10 border border-[#0BB005]/20 rounded-xl text-[#0BB005] font-black text-[10px] uppercase tracking-widest">Cockpit Coach</button>
                 <button onclick="logout()" class="w-9 h-9 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-gray-400"><i data-lucide="power" class="w-4 h-4"></i></button>
             </div>
@@ -58,7 +60,7 @@
 
         <main class="p-5 max-w-2xl mx-auto space-y-6 pb-32">
             <div id="view-dashboard" class="sub-view active space-y-8 fade-in text-white text-center sm:text-left">
-                <div class="space-y-1"><p class="text-[#0BB005] text-[10px] font-black uppercase tracking-widest">Aujourd'hui</p><h2 class="text-4xl italic">BONJOUR, <span id="user-name" class="text-[#0BB005]">ATHLÈTE</span></h2></div>
+                <div class="space-y-1"><p class="text-[#0BB005] text-[10px] font-black uppercase tracking-widest leading-none">Aujourd'hui</p><h2 class="text-4xl italic">BONJOUR, <span id="user-name" class="text-[#0BB005]">ATHLÈTE</span></h2></div>
                 <button onclick="startWorkout()" class="w-full bento-card p-10 flex flex-col items-center gap-4 text-center group">
                     <div class="w-16 h-16 rounded-full bg-[#0BB005] flex items-center justify-center group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(11,176,5,0.4)] text-black"><i data-lucide="play" class="fill-current translate-x-0.5"></i></div>
                     <div><h3 class="text-2xl mb-1 uppercase italic text-white">Démarrer la séance</h3><p id="current-program-name" class="text-gray-500 text-xs font-medium uppercase">Chargement...</p></div>
@@ -69,12 +71,14 @@
                 </div>
             </div>
 
+            <!-- COACH COCKPIT -->
             <div id="view-admin" class="sub-view hidden space-y-6 fade-in text-left">
                 <div class="flex items-center justify-between"><div><p class="text-[#0BB005] text-[10px] font-black uppercase tracking-widest">Command Center</p><h2 class="text-3xl italic tracking-tighter">Coach Cockpit</h2></div><button onclick="showSubView('dashboard')" class="w-12 h-12 bento-card flex items-center justify-center text-gray-500"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+                
                 <div id="admin-dashboard-stats" class="grid grid-cols-3 gap-3">
-                    <div class="bento-card p-4 text-center"><p id="stat-count-athletes" class="text-xl font-impact italic text-[#0BB005]">0</p><p class="text-[8px] font-black text-gray-600 uppercase tracking-widest">Athlètes</p></div>
-                    <div class="bento-card p-4 text-center"><p id="stat-count-templates" class="text-xl font-impact italic text-[#0BB005]">0</p><p class="text-[8px] font-black text-gray-600 uppercase tracking-widest">Modèles</p></div>
-                    <div class="bento-card p-4 text-center"><p class="text-xl font-impact italic text-[#0BB005]">0</p><p class="text-[8px] font-black text-gray-600 uppercase tracking-widest">Sessions</p></div>
+                    <div class="bento-card p-4 text-center"><p id="stat-count-athletes" class="text-xl font-impact italic text-[#0BB005]">0</p><p class="text-[8px] font-black text-gray-600 uppercase tracking-widest text-center">Athlètes</p></div>
+                    <div class="bento-card p-4 text-center"><p id="stat-count-templates" class="text-xl font-impact italic text-[#0BB005]">0</p><p class="text-[8px] font-black text-gray-600 uppercase tracking-widest text-center">Modèles</p></div>
+                    <div class="bento-card p-4 text-center"><p class="text-xl font-impact italic text-[#0BB005]">0</p><p class="text-[8px] font-black text-gray-600 uppercase tracking-widest text-center">Sessions</p></div>
                 </div>
 
                 <div id="admin-content" class="min-h-[400px]">
@@ -94,12 +98,12 @@
                         </div>
                     </div>
                     <div id="admin-sub-creator" class="hidden space-y-6">
-                        <div class="bento-card p-6 space-y-6 border-[#0BB005]/20 shadow-[0_0_30px_rgba(11,176,5,0.05)]">
-                            <div class="flex items-center gap-4"><button onclick="setAdminSubView('athletes')" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4"></i></button><div><h3 class="text-xl italic font-impact leading-none">Créateur</h3><p id="selected-athlete-name" class="text-[10px] text-[#0BB005] font-black uppercase tracking-widest mt-1 italic">---</p></div></div>
+                        <div class="bento-card p-6 space-y-6 border-[#0BB005]/20">
+                            <div class="flex items-center gap-4"><button onclick="setAdminSubView('athletes')" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4"></i></button><div><h3 class="text-xl italic font-impact leading-none text-white">Créateur</h3><p id="selected-athlete-name" class="text-[10px] text-[#0BB005] font-black uppercase tracking-widest mt-1 italic text-left">---</p></div></div>
                             <input type="text" id="admin-program-name" placeholder="TITRE DE LA SÉANCE" class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 outline-none focus:border-[#0BB005] font-impact italic text-lg text-white uppercase">
                             <div id="admin-exercise-list" class="space-y-4"></div>
                             <button onclick="openExercisePicker()" class="w-full border-2 border-dashed border-white/10 p-6 rounded-3xl text-gray-500 text-[10px] font-black tracking-widest hover:text-[#0BB005] flex items-center justify-center gap-2 transition-all"><i data-lucide="plus" class="w-4 h-4"></i> Ajouter un exercice</button>
-                            <div class="grid grid-cols-2 gap-3 pt-4"><button onclick="saveNewProgram()" id="btn-save-program" class="btn-action py-5 rounded-2xl text-lg shadow-xl uppercase italic font-impact">Déployer</button><button onclick="saveAsTemplate()" class="bg-white/5 border border-white/10 py-5 rounded-2xl text-gray-400 font-impact italic text-lg uppercase font-impact italic">Modèle</button></div>
+                            <div class="grid grid-cols-2 gap-3 pt-4"><button onclick="saveNewProgram()" id="btn-save-program" class="btn-action py-5 rounded-2xl text-lg shadow-xl uppercase italic font-impact">Déployer</button><button onclick="saveAsTemplate()" class="bg-white/5 border border-white/10 py-5 rounded-2xl text-gray-400 font-impact italic text-lg uppercase font-impact italic text-white">Modèle</button></div>
                         </div>
                     </div>
                 </div>
@@ -142,7 +146,7 @@
     <div id="template-picker" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center hidden">
         <div class="w-full h-full max-w-md flex flex-col p-6">
             <div class="flex justify-between items-center mb-6"><h3 class="text-3xl italic font-impact text-white uppercase font-impact italic">Choisir</h3><button onclick="document.getElementById('template-picker').classList.add('hidden')" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white"><i data-lucide="x" class="w-5 h-5"></i></button></div>
-            <div id="template-picker-list" class="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-20"></div>
+            <div id="template-picker-list" class="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-20 text-white"></div>
         </div>
     </div>
 
@@ -186,13 +190,13 @@
         }
 
         async function initGlobalDB() {
-            const cached = localStorage.getItem('global_exercises_cache_v6');
+            const cached = localStorage.getItem('global_exercises_cache_v7');
             if (cached) { GLOBAL_DB = JSON.parse(cached); return; }
             isGlobalLoading = true;
             try {
                 const res = await fetch(`${SCRIPT_URL}?action=getGlobalLibrary`);
                 const data = await res.json();
-                if (data && Array.isArray(data)) { GLOBAL_DB = data; localStorage.setItem('global_exercises_cache_v6', JSON.stringify(data)); }
+                if (data && Array.isArray(data)) { GLOBAL_DB = data; localStorage.setItem('global_exercises_cache_v7', JSON.stringify(data)); }
             } catch (e) {} finally { isGlobalLoading = false; if (activeTab === 'global') renderPickerList(); }
         }
 
@@ -200,9 +204,14 @@
         async function fetchTemplates() { try { const res = await fetch(`${SCRIPT_URL}?action=getTemplates`); ALL_TEMPLATES = await res.json(); document.getElementById('stat-count-templates').innerText = ALL_TEMPLATES.length; renderTemplates(); } catch (e) {} }
 
         async function importAndAddExercise(exo) {
-            plannedExercises.push({ name: exo.name, sets: 4, reps: 10, weight: 60, gifUrl: exo.gifUrl || "", instructions: exo.instructions || "", muscle: exo.muscle || "", equipment: exo.equipment || "" });
+            plannedExercises.push({ name: exo.name, sets: 4, reps: 10, weight: 60, gifUrl: exo.gifUrl || "", instructions: exo.instructions || "", muscle: exo.muscle || "", equipment: exo.equipment || "", id: exo.id });
             closePicker(); renderPlanned();
-            if (activeTab === 'global') { fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'importExercise', ...exo }) }).then(() => fetchLocalLibrary()); }
+            if (activeTab === 'global') { 
+                fetch(SCRIPT_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify({ action: 'importExercise', ...exo }) 
+                }).then(() => fetchLocalLibrary()); 
+            }
         }
 
         async function translateCurrentExo(exoJson) {
@@ -213,8 +222,6 @@
             try {
                 const res = await fetch(`${SCRIPT_URL}?action=translate&name=${encodeURIComponent(exo.name)}&instructions=${encodeURIComponent(exo.instructions)}`);
                 const data = await res.json();
-                
-                // On met à jour la modale
                 document.getElementById('exo-detail-name').innerText = data.name.toUpperCase();
                 document.getElementById('exo-detail-instr').innerHTML = data.instructions.split('\n').map(line => `<p>${line}</p>`).join('');
                 if (btn) btn.classList.add('hidden');
@@ -234,7 +241,7 @@
             const modal = document.getElementById('exo-detail-modal');
             const content = document.getElementById('exo-detail-content');
             const images = getAllImgs(exo.gifUrl || exo.illustrationUrl);
-            const isEnglish = /^[a-zA-Z0-9\s,.]+$/.test(exo.name); // Détection simpliste
+            const isEnglish = /^[a-zA-Z0-9\s,.]+$/.test(exo.name);
 
             content.innerHTML = `
                 <div class="text-center space-y-4">
@@ -248,18 +255,18 @@
                     </div>
                     ${images.length > 1 ? `
                     <div class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 pointer-events-none">
-                        <button onclick="scrollExoSlider(-1)" class="w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-white pointer-events-auto backdrop-blur-md border border-white/10"><i data-lucide="chevron-left"></i></button>
-                        <button onclick="scrollExoSlider(1)" class="w-10 h-10 bg-black/50 rounded-full flex items-center justify-center text-white pointer-events-auto backdrop-blur-md border border-white/10"><i data-lucide="chevron-right"></i></button>
+                        <button onclick="scrollExoSlider(-1)" class="w-10 h-10 bg-black/70 rounded-full flex items-center justify-center text-white pointer-events-auto backdrop-blur-md border border-white/10"><i data-lucide="chevron-left"></i></button>
+                        <button onclick="scrollExoSlider(1)" class="w-10 h-10 bg-black/70 rounded-full flex items-center justify-center text-white pointer-events-auto backdrop-blur-md border border-white/10"><i data-lucide="chevron-right"></i></button>
                     </div>
                     ` : ''}
                 </div>
 
-                <div class="bento-card p-6 space-y-4 border-white/10">
+                <div class="bento-card p-6 space-y-4 border-white/10 text-left">
                     <div class="flex justify-between items-center">
-                        <h3 class="text-xs font-black uppercase tracking-[0.2em] text-gray-500 text-left">Instructions</h3>
+                        <h3 class="text-xs font-black uppercase tracking-[0.2em] text-gray-500">Instructions</h3>
                         ${isEnglish ? `<button id="btn-translate-ia" onclick="translateCurrentExo('${encodeURIComponent(JSON.stringify(exo))}')" class="bg-[#0BB005]/10 text-[#0BB005] px-3 py-1.5 rounded-lg text-[9px] font-black uppercase flex items-center gap-2"><i data-lucide="languages" class="w-3 h-3"></i> Traduire avec l'IA</button>` : ''}
                     </div>
-                    <div id="exo-detail-instr" class="text-sm text-gray-300 leading-relaxed space-y-3 italic text-left">${(exo.instructions || "Aucune instruction disponible.").split('\n').map(line => `<p>${line}</p>`).join('')}</div>
+                    <div id="exo-detail-instr" class="text-sm text-gray-300 leading-relaxed space-y-3 italic">${(exo.instructions || "Aucune instruction disponible.").split('\n').map(line => `<p>${line}</p>`).join('')}</div>
                 </div>
             `;
             modal.classList.remove('hidden'); lucide.createIcons();
@@ -273,7 +280,7 @@
                 <div class="bg-white/5 border border-white/10 p-5 rounded-3xl flex flex-col gap-4 fade-in">
                     <div class="flex justify-between items-center">
                         <div onclick='showExoDetail(${JSON.stringify(plannedExercises[i]).replace(/'/g, "&apos;")})' class="flex items-center gap-3 cursor-pointer group">
-                            <img src="${getFirstImg(e.gifUrl)}" onerror="this.style.display='none'" class="w-12 h-12 rounded-xl object-cover bg-black border border-white/5 group-hover:scale-110 transition-transform">
+                            <img src="${getFirstImg(e.gifUrl)}" onerror="this.style.visibility='hidden'" class="w-12 h-12 rounded-xl object-cover bg-black border border-white/5 group-hover:scale-110 transition-transform">
                             <div class="text-left">
                                 <span class="text-[#0BB005] font-impact italic text-lg uppercase leading-none block">${e.name}</span>
                                 <span class="text-[8px] font-black text-gray-600 uppercase tracking-widest leading-none">Détails du mouvement</span>
@@ -298,8 +305,8 @@
             list.innerHTML = filtered.slice(0, 40).map((e) => `
                 <div class="bento-card p-4 flex justify-between items-center group overflow-hidden">
                     <div onclick='showExoDetail(${JSON.stringify(e).replace(/'/g, "&apos;")})' class="flex items-center gap-4 cursor-pointer flex-1 text-left">
-                        <img src="${getFirstImg(e.gifUrl)}" onerror="this.style.display='none'" class="w-14 h-14 rounded-xl object-cover bg-black/50 border border-white/5">
-                        <div><p class="font-impact italic text-lg text-white uppercase leading-tight">${e.name}</p><p class="text-[8px] text-gray-600 font-black uppercase mt-1">Détails • ${e.muscle || '---'}</p></div>
+                        <img src="${getFirstImg(e.gifUrl)}" onerror="this.style.visibility='hidden'" class="w-14 h-14 rounded-xl object-cover bg-black/50 border border-white/5">
+                        <div><p class="font-impact italic text-lg text-white uppercase leading-tight text-white">${e.name}</p><p class="text-[8px] text-gray-600 font-black uppercase mt-1">Détails • ${e.muscle || '---'}</p></div>
                     </div>
                     <button onclick='importAndAddExercise(${JSON.stringify(e).replace(/'/g, "&apos;")})' class="w-11 h-11 bg-[#0BB005]/10 text-[#0BB005] rounded-2xl flex items-center justify-center hover:bg-[#0BB005] hover:text-black transition-all"><i data-lucide="plus"></i></button>
                 </div>
@@ -310,8 +317,8 @@
         function setAdminSubView(view) { document.querySelectorAll('#admin-content > div').forEach(d => d.classList.add('hidden')); document.getElementById(`admin-sub-${view}`).classList.remove('hidden'); document.getElementById('nav-btn-athletes').classList.toggle('active', view === 'athletes'); document.getElementById('nav-btn-templates').classList.toggle('active', view === 'templates'); lucide.createIcons(); }
         async function fetchAllUsers() { try { const res = await fetch(`${SCRIPT_URL}?action=getAllUsers`); ALL_USERS = await res.json(); document.getElementById('stat-count-athletes').innerText = ALL_USERS.length; renderAthletes(); } catch (e) {} }
         function renderAthletes() { const list = document.getElementById('athletes-list'); list.innerHTML = ALL_USERS.map(u => `<div class="bento-card p-5 flex justify-between items-center group"><div class="flex items-center gap-4"><div class="w-12 h-12 rounded-2xl bg-[#0BB005]/10 flex items-center justify-center text-[#0BB005] font-black text-xl">${u.name.charAt(0).toUpperCase()}</div><div><p class="font-impact italic text-lg text-white uppercase leading-none">${u.name}</p><p class="text-[9px] text-gray-600 font-black uppercase mt-1 text-left text-white opacity-50">${u.email}</p></div></div><div class="flex gap-2"><button onclick="viewAthleteProfile('${u.email}', '${u.name.replace(/'/g, "\\'")}')" class="w-10 h-10 bg-white/5 text-gray-500 rounded-xl flex items-center justify-center hover:text-white transition-all"><i data-lucide="eye"></i></button><button onclick="selectAthleteForProgram('${u.email}', '${u.name.replace(/'/g, "\\'")}')" class="w-10 h-10 bg-[#0BB005]/5 text-[#0BB005] rounded-xl flex items-center justify-center hover:bg-[#0BB005] hover:text-black transition-all"><i data-lucide="plus"></i></button></div></div>`).join(''); lucide.createIcons(); }
-        function renderTemplates() { const list = document.getElementById('templates-list'); list.innerHTML = ALL_TEMPLATES.map(t => `<div class="bento-card p-5 flex justify-between items-center text-left"><div><p class="font-impact italic text-lg text-white uppercase leading-none text-white">${t.name}</p><p class="text-[9px] text-gray-600 font-black uppercase mt-1">${t.exercises.length} exercices</p></div><button onclick="loadTemplateToCreator('${t.id}')" class="w-10 h-10 bg-[#0BB005]/10 text-[#0BB005] rounded-xl flex items-center justify-center transition-all"><i data-lucide="edit-3" class="w-5 h-5"></i></button></div>`).join(''); lucide.createIcons(); }
-        async function viewAthleteProfile(email, name) { selectedAthlete = { email, name }; document.getElementById('profile-athlete-name').innerText = name.toUpperCase(); setAdminSubView('profile'); const list = document.getElementById('profile-exercise-list'); list.innerHTML = `<div class="py-10 text-center animate-pulse text-gray-700 uppercase font-black text-[10px]">Chargement...</div>`; try { const res = await fetch(`${SCRIPT_URL}?action=getUserProgram&email=${email}`); const prog = await res.json(); if (prog.length > 0) list.innerHTML = prog.map(exo => `<div class="bg-white/5 p-4 rounded-2xl border border-white/10 flex items-center gap-4 cursor-pointer text-left" onclick='showExoDetail(${JSON.stringify(exo).replace(/'/g, "&apos;")})'><img src="${getFirstImg(exo.gifUrl)}" onerror="this.style.display='none'" class="w-10 h-10 rounded-lg"><div><p class="font-impact text-white italic uppercase text-sm">${exo.exo}</p><p class="text-[9px] text-gray-600 font-black uppercase">${exo.sets}x${exo.reps} @ ${exo.weight}kg</p></div></div>`).join(''); else list.innerHTML = `<div class="py-10 text-center text-gray-800 italic text-xs uppercase font-black">Aucun programme actif</div>`; } catch (e) {} lucide.createIcons(); }
+        function renderTemplates() { const list = document.getElementById('templates-list'); list.innerHTML = ALL_TEMPLATES.map(t => `<div class="bento-card p-5 flex justify-between items-center text-left"><div><p class="font-impact italic text-lg text-white uppercase leading-none text-white">${t.name}</p><p class="text-[9px] text-gray-600 font-black uppercase mt-1 text-white opacity-50">${t.exercises.length} exercices</p></div><button onclick="loadTemplateToCreator('${t.id}')" class="w-10 h-10 bg-[#0BB005]/10 text-[#0BB005] rounded-xl flex items-center justify-center transition-all"><i data-lucide="edit-3" class="w-5 h-5"></i></button></div>`).join(''); lucide.createIcons(); }
+        async function viewAthleteProfile(email, name) { selectedAthlete = { email, name }; document.getElementById('profile-athlete-name').innerText = name.toUpperCase(); setAdminSubView('profile'); const list = document.getElementById('profile-exercise-list'); list.innerHTML = `<div class="py-10 text-center animate-pulse text-gray-700 uppercase font-black text-[10px]">Chargement...</div>`; try { const res = await fetch(`${SCRIPT_URL}?action=getUserProgram&email=${email}`); const prog = await res.json(); if (prog.length > 0) list.innerHTML = prog.map(exo => `<div class="bg-white/5 p-4 rounded-2xl border border-white/10 flex items-center gap-4 cursor-pointer text-left" onclick='showExoDetail(${JSON.stringify(exo).replace(/'/g, "&apos;")})'><img src="${getFirstImg(exo.gifUrl)}" onerror="this.style.visibility='hidden'" class="w-10 h-10 rounded-lg"><div><p class="font-impact text-white italic uppercase text-sm">${exo.exo}</p><p class="text-[9px] text-gray-600 font-black uppercase">${exo.sets}x${exo.reps} @ ${exo.weight}kg</p></div></div>`).join(''); else list.innerHTML = `<div class="py-10 text-center text-gray-800 italic text-xs uppercase font-black">Aucun programme actif</div>`; } catch (e) {} lucide.createIcons(); }
         function openTemplatePicker() { document.getElementById('template-picker').classList.remove('hidden'); const list = document.getElementById('template-picker-list'); list.innerHTML = ALL_TEMPLATES.map(t => `<button onclick="applyTemplateToAthlete('${t.id}')" class="w-full bento-card p-5 text-left group transition-all hover:border-[#0BB005]/50"><p class="font-impact italic text-lg text-white uppercase text-white">${t.name}</p><p class="text-[9px] text-gray-600 font-black uppercase mt-1 text-white opacity-50">${t.exercises.length} exercices</p></button>`).join(''); }
         function applyTemplateToAthlete(templateId) { const template = ALL_TEMPLATES.find(t => t.id === templateId); plannedExercises = JSON.parse(JSON.stringify(template.exercises)); document.getElementById('admin-program-name').value = template.name; document.getElementById('template-picker').classList.add('hidden'); document.getElementById('selected-athlete-name').innerText = selectedAthlete.name.toUpperCase(); renderPlanned(); setAdminSubView('creator'); }
         function loadTemplateToCreator(templateId) { const template = ALL_TEMPLATES.find(t => t.id === templateId); selectedAthlete = null; document.getElementById('selected-athlete-name').innerText = "ÉDITION DU MODÈLE"; document.getElementById('admin-program-name').value = template.name; plannedExercises = JSON.parse(JSON.stringify(template.exercises)); renderPlanned(); setAdminSubView('creator'); }
@@ -328,7 +335,7 @@
         function showSubView(viewId) { document.querySelectorAll('.sub-view').forEach(v => v.classList.add('hidden')); document.getElementById(`view-${viewId}`).classList.remove('hidden'); lucide.createIcons(); }
         async function fetchProgram() { try { const res = await fetch(`${SCRIPT_URL}?action=getUserProgram&email=${currentUser.email}`); userProgram = await res.json(); document.getElementById('current-program-name').innerText = userProgram.length > 0 ? userProgram[0].programName : "AUCUN PROGRAMME"; } catch (e) {} }
         function startWorkout() { if (userProgram.length === 0) return alert("Pas de programme !"); currentExoIndex = 0; renderExo(); showSubView('training'); }
-        function renderExo() { const exo = userProgram[currentExoIndex]; document.getElementById('training-exo-name').innerText = exo.exo.toUpperCase(); const container = document.getElementById('sets-container'); container.innerHTML = exo ? Array.from({length: exo.sets}, (_, i) => `<div class="bento-card p-6 flex justify-between items-center fade-in text-white"><div class="flex flex-col"><span class="text-gray-600 text-[10px] font-black uppercase mb-1">Série ${i+1}</span><span class="font-impact italic text-2xl">${exo.weight}kg x ${exo.reps}</span></div><button onclick="this.classList.toggle('bg-[#0BB005]');" class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white"><i data-lucide="check"></i></button></div>`).join('') : ""; document.getElementById('btn-next-exo').innerText = currentExoIndex === userProgram.length - 1 ? "TERMINER" : "SUIVANT"; lucide.createIcons(); }
+        function renderExo() { const exo = userProgram[currentExoIndex]; document.getElementById('training-exo-name').innerText = exo.exo.toUpperCase(); const container = document.getElementById('sets-container'); container.innerHTML = exo ? Array.from({length: exo.sets}, (_, i) => `<div class="bento-card p-6 flex justify-between items-center fade-in text-white"><div class="flex flex-col text-white"><span class="text-gray-600 text-[10px] font-black uppercase mb-1">Série ${i+1}</span><span class="font-impact italic text-2xl">${exo.weight}kg x ${exo.reps}</span></div><button onclick="this.classList.toggle('bg-[#0BB005]');" class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white"><i data-lucide="check"></i></button></div>`).join('') : ""; document.getElementById('btn-next-exo').innerText = currentExoIndex === userProgram.length - 1 ? "TERMINER" : "SUIVANT"; lucide.createIcons(); }
         function nextExo() { if (currentExoIndex < userProgram.length - 1) { currentExoIndex++; renderExo(); } else { alert("BRAVO !"); showSubView('dashboard'); } }
         function prevExo() { if (currentExoIndex > 0) { currentExoIndex--; renderExo(); } }
         function logout() { location.reload(); }
