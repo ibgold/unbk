@@ -8,194 +8,101 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,900;1,800&family=Inter:wght@400;500;600&display=swap');
-        
-        :root {
-            --primary: #0BB005; 
-            --primary-dark: #088404;
-            --bg-dark: #050505;
-            --surface: #0f0f0f;
-            --surface-light: #161616;
-            --border: rgba(255,255,255,0.05);
-        }
-
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--bg-dark); 
-            color: #ffffff; 
-            -webkit-tap-highlight-color: transparent;
-            letter-spacing: -0.01em;
-            margin: 0; padding: 0;
-        }
-
-        h1, h2, h3, .font-impact {
-            font-family: 'Archivo', sans-serif;
-            font-weight: 900;
-            font-style: italic;
-            text-transform: uppercase;
-        }
-
-        .view { display: none; }
-        .view.active { display: block; }
+        :root { --primary: #0BB005; --primary-dark: #088404; --bg-dark: #050505; --surface: #0f0f0f; --border: rgba(255,255,255,0.05); }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: #ffffff; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        h1, h2, h3, .font-impact { font-family: 'Archivo', sans-serif; font-weight: 900; font-style: italic; text-transform: uppercase; }
+        .view, .sub-view { display: none; }
+        .view.active, .sub-view.active { display: block; }
         .view.active.flex { display: flex; }
-        
-        .bento-card { 
-            background: var(--surface); 
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn-action {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: black;
-            font-family: 'Archivo', sans-serif;
-            font-weight: 900;
-            text-transform: uppercase;
-            font-style: italic;
-        }
-
+        .bento-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; }
+        .btn-action { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: black; font-family: 'Archivo', sans-serif; font-weight: 900; text-transform: uppercase; font-style: italic; }
         .btn-action:active { transform: scale(0.96); }
-        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .bg-grain {
-            position: fixed; inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.03; pointer-events: none; z-index: 100;
-        }
-
-        .coach-nav-item {
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            color: #4b5563; font-size: 10px; font-weight: 800; text-transform: uppercase;
-        }
-        .coach-nav-item.active { color: var(--primary); }
-
+        .status-bar { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 9999; background: #111; }
+        .status-progress { height: 100%; width: 0%; transition: width 0.3s ease; }
+        .status-ok { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+        .status-error { background: #ff3333; width: 100% !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="pb-24 overflow-x-hidden min-h-screen">
-    <div class="bg-grain"></div>
+<body class="pb-24 min-h-screen text-white">
+    <div class="status-bar"><div id="status-progress" class="status-progress"></div></div>
 
-    <!-- CONNEXION -->
-    <div id="view-login" class="view active flex min-h-screen w-full flex-col items-center justify-center p-8">
-        <div class="w-full max-w-sm fade-in flex flex-col items-center">
-            <div class="flex flex-col items-center mb-12 text-center">
-                <div class="w-20 h-20 bg-[#0BB005] rounded-3xl flex items-center justify-center rotate-3 shadow-[0_0_40px_rgba(11,176,5,0.3)] mb-6 text-black">
-                    <i data-lucide="shield-check" class="w-10 h-10"></i>
-                </div>
-                <h1 class="text-4xl italic tracking-tighter text-white">UNBREAKABLE</h1>
-                <p class="text-[#0BB005] font-bold text-[10px] tracking-[0.4em] uppercase opacity-80 text-center">No Limits Only Progress</p>
+    <!-- VUE CONNEXION -->
+    <div id="view-login" class="view active flex min-h-screen flex-col items-center justify-center p-8">
+        <div class="w-full max-w-sm flex flex-col items-center">
+            <div class="w-20 h-20 bg-[#0BB005] rounded-3xl flex items-center justify-center mb-6 text-black shadow-[0_0_40px_rgba(11,176,5,0.3)]">
+                <i data-lucide="shield-check" class="w-10 h-10"></i>
             </div>
-            <div class="space-y-4 w-full">
-                <div class="bg-white/5 border border-white/10 rounded-2xl p-1">
-                    <input type="email" id="login-email" placeholder="votre@email.com" class="w-full bg-transparent border-none rounded-2xl p-4 focus:ring-0 outline-none text-center text-white placeholder:text-gray-600">
-                </div>
-                <button onclick="handleLogin()" id="btn-login" class="w-full btn-action py-5 rounded-2xl text-xl transition-all shadow-xl">S'IDENTIFIER</button>
-            </div>
-            <p id="login-error" class="text-red-500 mt-6 hidden text-center text-xs font-bold uppercase tracking-widest"></p>
+            <h1 class="text-4xl italic tracking-tighter mb-8 font-impact">UNBREAKABLE</h1>
+            <input type="email" id="login-email" placeholder="votre@email.com" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 mb-4 text-center outline-none focus:border-[#0BB005]">
+            <button onclick="handleLogin()" id="btn-login" class="w-full btn-action py-5 rounded-2xl text-xl shadow-xl">S'IDENTIFIER</button>
+            <p id="login-error" class="text-red-500 mt-6 hidden text-[10px] font-black uppercase tracking-widest"></p>
         </div>
     </div>
 
     <!-- APP PRINCIPALE -->
     <div id="main-app" class="view">
         <header class="px-6 py-6 flex justify-between items-center sticky top-0 z-50 bg-black/50 backdrop-blur-xl border-b border-white/5">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-white rounded-xl flex items-center justify-center"><i data-lucide="zap" class="text-black w-5 h-5 fill-current"></i></div>
-                <span class="font-impact text-xl italic tracking-tighter text-white">UNBREAKABLE</span>
-            </div>
+            <div class="flex items-center gap-3"><span class="font-impact text-xl italic text-white">UNBREAKABLE</span></div>
             <div class="flex gap-2">
-                <button id="btn-admin-access" onclick="openCoachMode()" class="hidden px-4 py-2 bg-[#0BB005]/10 border border-[#0BB005]/20 rounded-xl text-[#0BB005] font-black text-[10px] uppercase tracking-widest">Cockpit Coach</button>
-                <button onclick="logout()" class="w-9 h-9 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-gray-400 hover:text-white transition-colors"><i data-lucide="power" class="w-4 h-4"></i></button>
+                <button id="btn-admin-access" onclick="openCoachMode()" class="hidden px-4 py-2 bg-[#0BB005]/10 border border-[#0BB005]/20 rounded-xl text-[#0BB005] font-black text-[10px] uppercase">Coach Cockpit</button>
+                <button onclick="location.reload()" class="w-9 h-9 bg-white/5 rounded-xl flex items-center justify-center"><i data-lucide="power" class="w-4 h-4"></i></button>
             </div>
         </header>
 
-        <main class="p-5 max-w-2xl mx-auto space-y-6 pb-32">
+        <main class="p-5 max-w-2xl mx-auto pb-32">
             <!-- DASHBOARD ATHLÈTE -->
-            <div id="view-dashboard" class="sub-view active space-y-8 fade-in">
-                <div class="space-y-1">
-                    <p class="text-[#0BB005] text-[10px] font-black uppercase tracking-widest">Aujourd'hui</p>
-                    <h2 class="text-4xl italic text-white">BONJOUR, <span id="user-name" class="text-[#0BB005]">ATHLÈTE</span></h2>
-                </div>
-                <button onclick="startWorkout()" class="w-full bento-card p-10 flex flex-col items-center gap-4 text-center group">
-                    <div class="w-16 h-16 rounded-full bg-[#0BB005] flex items-center justify-center group-hover:scale-110 transition-transform shadow-[0_0_30px_rgba(11,176,5,0.4)] text-black"><i data-lucide="play" class="fill-current translate-x-0.5"></i></div>
-                    <div>
-                        <h3 class="text-2xl mb-1 text-white uppercase italic">Démarrer la séance</h3>
-                        <p id="current-program-name" class="text-gray-500 text-xs font-medium uppercase">Chargement...</p>
-                    </div>
+            <div id="view-dashboard" class="sub-view active space-y-8">
+                <h2 class="text-4xl italic font-impact">BONJOUR, <span id="user-name" class="text-[#0BB005]">...</span></h2>
+                <button onclick="startWorkout()" class="w-full bento-card p-10 flex flex-col items-center gap-4 text-center">
+                    <div class="w-16 h-16 rounded-full bg-[#0BB005] flex items-center justify-center text-black shadow-[0_0_30px_rgba(11,176,5,0.4)]"><i data-lucide="play" class="fill-current"></i></div>
+                    <p id="current-program-name" class="text-gray-500 text-xs font-black uppercase">Chargement...</p>
                 </button>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bento-card p-6 border-white/5"><p class="text-gray-600 text-[10px] font-black uppercase mb-2 tracking-widest">Volume total</p><p class="text-3xl font-impact italic tracking-tighter text-white">-- KG</p></div>
-                    <div class="bento-card p-6 border-white/5"><p class="text-gray-600 text-[10px] font-black uppercase mb-2 tracking-widest">Fréquence</p><p class="text-3xl font-impact italic tracking-tighter text-white">-- S/S</p></div>
+            </div>
+
+            <!-- COACH COCKPIT -->
+            <div id="view-admin" class="sub-view space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-3xl italic font-impact">Coach Cockpit</h2>
+                    <button onclick="showSubView('dashboard')" class="text-gray-500"><i data-lucide="x"></i></button>
+                </div>
+                
+                <!-- Liste Athlètes -->
+                <div id="admin-sub-athletes" class="admin-tab active space-y-4">
+                    <div id="athletes-list" class="space-y-3"></div>
+                </div>
+
+                <!-- Créateur de Programme -->
+                <div id="admin-sub-creator" class="admin-tab hidden space-y-6">
+                    <div class="bento-card p-6 space-y-6 border-[#0BB005]/20">
+                        <div class="flex items-center gap-4">
+                            <button onclick="setAdminSubView('athletes')" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center"><i data-lucide="arrow-left" class="w-4 h-4"></i></button>
+                            <h3 class="text-xl italic font-impact" id="selected-athlete-name">CRÉATEUR</h3>
+                        </div>
+                        <input type="text" id="admin-program-name" placeholder="TITRE SÉANCE" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-impact italic text-white uppercase">
+                        <div id="admin-exercise-list" class="space-y-4"></div>
+                        <button onclick="openExercisePicker()" class="w-full border-2 border-dashed border-white/10 p-6 rounded-3xl text-gray-500 text-[10px] font-black uppercase tracking-widest hover:text-[#0BB005]"><i data-lucide="plus" class="inline w-4 h-4 mr-2"></i> Ajouter Exercice</button>
+                        <button onclick="saveNewProgram()" id="btn-save-program" class="w-full btn-action py-5 rounded-2xl text-lg shadow-xl">Déployer Programme</button>
+                    </div>
+                </div>
+
+                <!-- Barre Nav Basse Coach -->
+                <div class="fixed bottom-6 left-5 right-5 h-20 bento-card bg-black/80 backdrop-blur-2xl flex items-center justify-around z-[60]">
+                    <button onclick="setAdminSubView('athletes')" class="flex flex-col items-center text-[10px] font-black uppercase text-[#0BB005]"><i data-lucide="users" class="mb-1"></i>Team</button>
+                    <button onclick="openExercisePicker()" class="flex flex-col items-center text-[10px] font-black uppercase text-gray-600"><i data-lucide="book-open" class="mb-1"></i>Biblio</button>
                 </div>
             </div>
 
-            <!-- VUE COACH (COCKPIT) -->
-            <div id="view-admin" class="sub-view hidden space-y-6 fade-in">
-                <div class="flex items-center justify-between">
-                    <div><p class="text-[#0BB005] text-[10px] font-black uppercase tracking-widest leading-none">Command Center</p><h2 class="text-3xl italic tracking-tighter text-white">Coach Cockpit</h2></div>
-                    <button onclick="showSubView('dashboard')" class="w-12 h-12 bento-card flex items-center justify-center text-gray-500"><i data-lucide="x" class="w-5 h-5"></i></button>
-                </div>
-
-                <div id="admin-dashboard-stats" class="grid grid-cols-3 gap-3">
-                    <div class="bento-card p-4 text-center"><p id="stat-count-athletes" class="text-xl font-impact italic text-[#0BB005]">0</p><p class="text-[8px] font-black text-gray-600 uppercase tracking-widest">Athlètes</p></div>
-                    <div class="bento-card p-4 text-center"><p id="stat-count-templates" class="text-xl font-impact italic text-[#0BB005]">0</p><p class="text-[8px] font-black text-gray-600 uppercase tracking-widest">Modèles</p></div>
-                    <div class="bento-card p-4 text-center"><p class="text-xl font-impact italic text-[#0BB005]">0</p><p class="text-[8px] font-black text-gray-600 uppercase tracking-widest">Sessions</p></div>
-                </div>
-
-                <div id="admin-content" class="min-h-[400px]">
-                    <div id="admin-sub-athletes" class="space-y-4">
-                        <div class="flex justify-between items-center ml-1"><h3 class="text-xs font-black uppercase tracking-widest text-gray-400">Ma Team</h3><button onclick="fetchAllUsers()" class="p-2 bg-white/5 rounded-lg text-[#0BB005]"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button></div>
-                        <div id="athletes-list" class="space-y-3"></div>
-                    </div>
-
-                    <div id="admin-sub-templates" class="hidden space-y-4">
-                        <div class="flex justify-between items-center ml-1"><h3 class="text-xs font-black uppercase tracking-widest text-gray-400">Séances Types</h3><button onclick="selectAthleteForProgram(null, 'NOUVEAU MODÈLE')" class="p-2 bg-[#0BB005]/10 rounded-lg text-[#0BB005]"><i data-lucide="plus" class="w-4 h-4"></i></button></div>
-                        <div id="templates-list" class="space-y-3"></div>
-                    </div>
-
-                    <div id="admin-sub-profile" class="hidden space-y-6">
-                        <div class="bento-card p-6 space-y-6 border-[#0BB005]/20">
-                            <div class="flex items-center gap-4"><button onclick="setAdminSubView('athletes')" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4"></i></button><div><h3 class="text-xl italic font-impact text-white">Fiche Profil</h3><p id="profile-athlete-name" class="text-[10px] text-[#0BB005] font-black uppercase mt-1">---</p></div></div>
-                            <div id="profile-exercise-list" class="space-y-3"></div>
-                            <button onclick="openTemplatePicker()" class="w-full btn-action py-4 rounded-2xl text-sm shadow-lg">ASSIGNER UN MODÈLE</button>
-                        </div>
-                    </div>
-
-                    <div id="admin-sub-creator" class="hidden space-y-6">
-                        <div class="bento-card p-6 space-y-6 border-[#0BB005]/20">
-                            <div class="flex items-center gap-4"><button onclick="setAdminSubView('athletes')" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4"></i></button><div><h3 class="text-xl italic font-impact text-white leading-none">Créateur</h3><p id="selected-athlete-name" class="text-[10px] text-[#0BB005] font-black uppercase tracking-widest mt-1 italic">---</p></div></div>
-                            <input type="text" id="admin-program-name" placeholder="TITRE DE LA SÉANCE" class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 outline-none focus:border-[#0BB005] font-impact italic text-lg text-white uppercase">
-                            <div id="admin-exercise-list" class="space-y-4"></div>
-                            <button onclick="openExercisePicker()" class="w-full border-2 border-dashed border-white/10 p-6 rounded-3xl text-gray-500 text-[10px] font-black tracking-widest hover:text-[#0BB005] transition-all flex items-center justify-center gap-2"><i data-lucide="plus" class="w-4 h-4"></i> Ajouter un exercice</button>
-                            <div class="grid grid-cols-2 gap-3 pt-4">
-                                <button onclick="saveNewProgram()" id="btn-save-program" class="btn-action py-5 rounded-2xl text-lg shadow-xl uppercase italic font-impact">Déployer</button>
-                                <button onclick="saveAsTemplate()" class="bg-white/5 border border-white/10 py-5 rounded-2xl text-gray-400 font-impact italic text-lg uppercase">Modèle</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Barre de Navigation Basse Coach -->
-                <div class="fixed bottom-6 left-5 right-5 h-20 bento-card bg-black/80 backdrop-blur-2xl border-white/10 flex items-center justify-around px-6 z-[60] shadow-2xl">
-                    <button onclick="setAdminSubView('athletes')" id="nav-btn-athletes" class="coach-nav-item active"><i data-lucide="users" class="w-6 h-6"></i><span>Team</span></button>
-                    <button onclick="openTemplatesView()" id="nav-btn-templates" class="coach-nav-item"><i data-lucide="layout" class="w-6 h-6"></i><span>Modèles</span></button>
-                    <button onclick="openExerciseLibrary()" class="coach-nav-item"><i data-lucide="book-open" class="w-6 h-6"></i><span>Biblio</span></button>
-                </div>
-            </div>
-            
-            <!-- VUE ENTRAÎNEMENT (SIMPLIFIÉE) -->
-            <div id="view-training" class="sub-view hidden space-y-8 fade-in">
+            <!-- VUE ENTRAÎNEMENT -->
+            <div id="view-training" class="sub-view space-y-8">
                 <div class="flex justify-between items-start">
-                    <div class="space-y-1"><p class="text-[#0BB005] text-[10px] font-black uppercase tracking-widest">En cours</p><h2 class="text-4xl italic text-white" id="training-exo-name">---</h2></div>
-                    <div class="bg-[#0BB005] px-4 py-2 rounded-xl text-black font-impact italic text-lg shadow-[0_0_20px_rgba(11,176,5,0.3)]" id="global-timer">00:00</div>
+                    <h2 class="text-4xl italic font-impact" id="training-exo-name">---</h2>
+                    <div class="bg-[#0BB005] px-4 py-2 rounded-xl text-black font-impact italic text-lg shadow-[0_0_20px_rgba(11,176,5,0.3)]">00:00</div>
                 </div>
                 <div id="sets-container" class="space-y-4"></div>
-                <div class="grid grid-cols-2 gap-4 pt-6">
-                    <button onclick="prevExo()" class="bg-white/5 border border-white/10 py-5 rounded-2xl font-impact italic text-gray-400 uppercase">Précédent</button>
-                    <button onclick="nextExo()" id="btn-next-exo" class="btn-action py-5 rounded-2xl text-xl uppercase italic font-impact">Suivant</button>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="prevExo()" class="bg-white/5 border border-white/10 py-5 rounded-2xl font-impact italic text-gray-400">PRÉCÉDENT</button>
+                    <button onclick="nextExo()" id="btn-next-exo" class="btn-action py-5 rounded-2xl text-xl font-impact">SUIVANT</button>
                 </div>
             </div>
         </main>
@@ -204,232 +111,162 @@
     <!-- PICKER EXERCICES -->
     <div id="exo-picker" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center hidden">
         <div class="w-full h-full max-w-md flex flex-col p-6">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-3xl italic tracking-tighter font-impact text-white uppercase">Bibliothèque</h3><button onclick="closePicker()" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white"><i data-lucide="x" class="w-5 h-5"></i></button></div>
-            <div class="flex bg-white/5 p-1 rounded-2xl gap-1 mb-6">
-                <button onclick="setPickerTab('local')" id="tab-local" class="flex-1 py-3 rounded-xl bg-[#0BB005] text-black font-black text-[10px] uppercase tracking-widest">Ma Base</button>
-                <button onclick="setPickerTab('global')" id="tab-global" class="flex-1 py-3 rounded-xl text-gray-500 font-black text-[10px] uppercase tracking-widest">ExerciseDB</button>
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-3xl italic font-impact">Bibliothèque</h3>
+                <button onclick="closePicker()" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center"><i data-lucide="x"></i></button>
             </div>
-            <input type="text" id="picker-search" oninput="filterPicker()" placeholder="Ex: Bench Press..." class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 mb-6 outline-none focus:border-[#0BB005] text-white">
+            <div class="flex bg-white/5 p-1 rounded-2xl gap-1 mb-6">
+                <button onclick="setPickerTab('local')" id="tab-local" class="flex-1 py-3 rounded-xl bg-[#0BB005] text-black font-black text-[10px] uppercase">Ma Base</button>
+                <button onclick="setPickerTab('global')" id="tab-global" class="flex-1 py-3 rounded-xl text-gray-500 font-black text-[10px] uppercase">ExerciseDB</button>
+            </div>
+            <input type="text" id="picker-search" oninput="renderPickerList()" placeholder="Rechercher..." class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 mb-6 outline-none">
             <div id="picker-list" class="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-20"></div>
         </div>
     </div>
 
-    <!-- PICKER MODÈLES -->
-    <div id="template-picker" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center hidden">
-        <div class="w-full h-full max-w-md flex flex-col p-6">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-3xl italic tracking-tighter font-impact text-white uppercase">Sélectionner</h3><button onclick="document.getElementById('template-picker').classList.add('hidden')" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white"><i data-lucide="x" class="w-5 h-5"></i></button></div>
-            <div id="template-picker-list" class="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-20"></div>
-        </div>
-    </div>
-
     <script>
-        // --- ÉTAT GLOBAL ---
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIRyIvO5-aqhTI4jy0I83okFuxDKSGTQhrE48AfQIOAhXcqs2uAnN5ULE-8MGZHR_x/exec";
-        let currentUser = null, userProgram = [], currentExoIndex = 0, EXERCISE_LIB = [], GLOBAL_DB = [], ALL_USERS = [], ALL_TEMPLATES = [], selectedAthlete = null, plannedExercises = [], activeTab = 'local', isGlobalLoading = false;
+        let currentUser = null, userProgram = [], ALL_USERS = [], EXERCISE_LIB = [], GLOBAL_DB = [], plannedExercises = [], selectedAthlete = null;
+        let activeTab = 'local', isGlobalLoading = false, currentExoIndex = 0;
+
+        function setStatus(pct, err = false) { 
+            const b = document.getElementById('status-progress'); 
+            if(b) { b.style.width = pct + "%"; b.className = "status-progress " + (err ? "status-error" : "status-ok"); }
+            if(pct >= 100 && !err) setTimeout(() => b.style.width="0%", 1000);
+        }
 
         async function handleLogin() {
             const email = document.getElementById('login-email').value.trim();
-            if (!email) return;
-            const btn = document.getElementById('btn-login'); btn.disabled = true; btn.innerText = "ACCÈS...";
+            if(!email) return;
+            const btn = document.getElementById('btn-login'); btn.disabled = true; setStatus(30);
             try {
                 const res = await fetch(`${SCRIPT_URL}?action=getUser&email=${email}`);
                 const data = await res.json();
-                if (data && data.email) {
-                    currentUser = data;
+                if(data.email) {
+                    currentUser = data; setStatus(100);
                     document.getElementById('view-login').classList.remove('active', 'flex');
                     document.getElementById('main-app').classList.add('active');
                     document.getElementById('user-name').innerText = data.name.toUpperCase();
-                    fetchLocalLibrary(); initGlobalDB(); fetchTemplates();
-                    if (data.role === 'admin') { document.getElementById('btn-admin-access').classList.remove('hidden'); openCoachMode(); }
+                    fetchLocalData();
+                    if(data.role === 'admin') { document.getElementById('btn-admin-access').classList.remove('hidden'); openCoachMode(); }
                     else fetchProgram();
-                } else {
-                    document.getElementById('login-error').innerText = "IDENTIFIANT INCONNU"; document.getElementById('login-error').classList.remove('hidden');
-                }
-            } catch (e) { console.error(e); } finally { btn.disabled = false; btn.innerText = "S'IDENTIFIER"; }
+                } else { setStatus(100, true); document.getElementById('login-error').innerText = "INCONNU"; document.getElementById('login-error').classList.remove('hidden'); }
+            } catch(e) { setStatus(100, true); } finally { btn.disabled = false; }
         }
 
-        // --- BASES DE DONNÉES & IMPORTATION ---
+        async function fetchLocalData() {
+            try {
+                const resExo = await fetch(`${SCRIPT_URL}?action=getExercises`); EXERCISE_LIB = await resExo.json();
+                const resUsers = await fetch(`${SCRIPT_URL}?action=getAllUsers`); ALL_USERS = await resUsers.json();
+                renderAthletes();
+            } catch(e) {}
+        }
+
         async function initGlobalDB() {
-            const cached = localStorage.getItem('global_exercises_cache');
-            if (cached) { GLOBAL_DB = JSON.parse(cached); return; }
-            isGlobalLoading = true;
+            if(GLOBAL_DB.length > 0) return;
+            isGlobalLoading = true; renderPickerList(); setStatus(50);
             try {
                 const res = await fetch(`${SCRIPT_URL}?action=getGlobalLibrary`);
                 const data = await res.json();
-                if (data && Array.isArray(data)) {
-                    GLOBAL_DB = data; localStorage.setItem('global_exercises_cache', JSON.stringify(data));
-                }
-            } catch (e) {} finally { isGlobalLoading = false; if (activeTab === 'global') renderPickerList(); }
+                if(Array.isArray(data)) { GLOBAL_DB = data; setStatus(100); }
+                else if(data.error) { setStatus(100, true); console.error("GAS Error:", data.error); }
+            } catch(e) { setStatus(100, true); } finally { isGlobalLoading = false; renderPickerList(); }
         }
 
-        async function fetchLocalLibrary() { try { const res = await fetch(`${SCRIPT_URL}?action=getExercises`); EXERCISE_LIB = await res.json(); } catch (e) {} }
-        async function fetchTemplates() { try { const res = await fetch(`${SCRIPT_URL}?action=getTemplates`); ALL_TEMPLATES = await res.json(); document.getElementById('stat-count-templates').innerText = ALL_TEMPLATES.length; renderTemplates(); } catch (e) {} }
-
-        // --- FONCTION D'IMPORTATION (CORRECTION) ---
-        async function importAndAddExercise(exo) {
-            // 1. On l'ajoute visuellement immédiatement au créateur
-            plannedExercises.push({
-                name: exo.name, sets: 4, reps: 10, weight: 60, gifUrl: exo.gifUrl || ""
-            });
-            closePicker();
-            renderPlanned();
-
-            // 2. Si on est dans l'onglet Global, on lance l'importation vers le Sheet local
-            if (activeTab === 'global') {
-                console.log("Tentative d'importation vers Google Sheets...");
-                // On n'utilise PAS no-cors ici pour que le corps de la requête soit transmis proprement
-                fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'importExercise',
-                        id: exo.id,
-                        name: exo.name,
-                        muscle: exo.target || exo.muscle,
-                        gifUrl: exo.gifUrl,
-                        equipment: exo.equipment,
-                        bodyPart: exo.bodyPart
-                    })
-                }).then(async () => {
-                    console.log("Importation terminée.");
-                    fetchLocalLibrary(); // On rafraîchit la base locale
-                }).catch(err => console.error("Erreur d'importation", err));
-            }
-        }
-
-        // --- COACH LOGIQUE ---
-        function setAdminSubView(view) {
-            document.querySelectorAll('#admin-content > div').forEach(d => d.classList.add('hidden'));
-            document.getElementById(`admin-sub-${view}`).classList.remove('hidden');
-            document.getElementById('nav-btn-athletes').classList.toggle('active', view === 'athletes');
-            document.getElementById('nav-btn-templates').classList.toggle('active', view === 'templates');
-            lucide.createIcons();
-        }
-
-        async function fetchAllUsers() { try { const res = await fetch(`${SCRIPT_URL}?action=getAllUsers`); ALL_USERS = await res.json(); document.getElementById('stat-count-athletes').innerText = ALL_USERS.length; renderAthletes(); } catch (e) {} }
+        function showSubView(v) { document.querySelectorAll('.sub-view').forEach(s => s.classList.remove('active')); document.getElementById('view-'+v).classList.add('active'); lucide.createIcons(); }
+        function openCoachMode() { showSubView('admin'); setAdminSubView('athletes'); }
+        function setAdminSubView(v) { document.querySelectorAll('.admin-tab').forEach(t => t.classList.add('hidden')); document.getElementById('admin-sub-'+v).classList.remove('hidden'); lucide.createIcons(); }
 
         function renderAthletes() {
             const list = document.getElementById('athletes-list');
             list.innerHTML = ALL_USERS.map(u => `
-                <div class="bento-card p-5 flex justify-between items-center group">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-[#0BB005]/10 flex items-center justify-center text-[#0BB005] font-black text-xl">${u.name.charAt(0).toUpperCase()}</div>
-                        <div><p class="font-impact italic text-lg text-white uppercase leading-none">${u.name}</p><p class="text-[9px] text-gray-600 font-black uppercase mt-1">${u.email}</p></div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="viewAthleteProfile('${u.email}', '${u.name.replace(/'/g, "\\'")}')" class="w-10 h-10 bg-white/5 text-gray-500 rounded-xl flex items-center justify-center hover:text-white transition-all"><i data-lucide="eye" class="w-5 h-5"></i></button>
-                        <button onclick="selectAthleteForProgram('${u.email}', '${u.name.replace(/'/g, "\\'")}')" class="w-10 h-10 bg-[#0BB005]/5 text-[#0BB005] rounded-xl flex items-center justify-center hover:bg-[#0BB005] hover:text-black transition-all"><i data-lucide="plus" class="w-5 h-5"></i></button>
-                    </div>
+                <div class="bento-card p-5 flex justify-between items-center">
+                    <div><p class="font-impact italic text-lg uppercase">${u.name}</p><p class="text-[9px] text-gray-600 font-black uppercase">${u.email}</p></div>
+                    <button onclick="selectAthleteForProgram('${u.email}', '${u.name.replace(/'/g, "\\'")}')" class="w-10 h-10 bg-[#0BB005]/10 text-[#0BB005] rounded-xl flex items-center justify-center"><i data-lucide="plus"></i></button>
                 </div>
             `).join('');
             lucide.createIcons();
         }
 
-        function renderTemplates() {
-            const list = document.getElementById('templates-list');
-            list.innerHTML = ALL_TEMPLATES.map(t => `<div class="bento-card p-5 flex justify-between items-center"><div><p class="font-impact italic text-lg text-white uppercase leading-none">${t.name}</p><p class="text-[9px] text-gray-600 font-black uppercase mt-1">${t.exercises.length} exercices</p></div><button onclick="loadTemplateToCreator('${t.id}')" class="w-10 h-10 bg-[#0BB005]/10 text-[#0BB005] rounded-xl flex items-center justify-center transition-all"><i data-lucide="edit-3" class="w-5 h-5"></i></button></div>`).join('');
-            lucide.createIcons();
+        function selectAthleteForProgram(email, name) { 
+            selectedAthlete = {email, name}; 
+            document.getElementById('selected-athlete-name').innerText = name.toUpperCase();
+            plannedExercises = []; document.getElementById('admin-program-name').value = "";
+            renderPlanned(); setAdminSubView('creator'); 
         }
 
-        async function viewAthleteProfile(email, name) {
-            selectedAthlete = { email, name }; document.getElementById('profile-athlete-name').innerText = name.toUpperCase(); setAdminSubView('profile');
-            const list = document.getElementById('profile-exercise-list'); list.innerHTML = `<div class="py-10 text-center animate-pulse text-gray-700">Chargement...</div>`;
-            try {
-                const res = await fetch(`${SCRIPT_URL}?action=getUserProgram&email=${email}`); const prog = await res.json();
-                if (prog.length > 0) { list.innerHTML = prog.map(exo => `<div class="bg-white/5 p-4 rounded-2xl border border-white/10 flex items-center gap-4">${exo.gifUrl ? `<img src="${exo.gifUrl}" class="w-10 h-10 rounded-lg">` : ''}<div><p class="font-impact text-white italic uppercase text-sm">${exo.exo}</p><p class="text-[9px] text-gray-600 font-black uppercase">${exo.sets}x${exo.reps} @ ${exo.weight}kg</p></div></div>`).join(''); } 
-                else list.innerHTML = `<div class="py-10 text-center text-gray-800 italic text-xs uppercase font-black">Aucun programme actif</div>`;
-            } catch (e) {} lucide.createIcons();
-        }
-
-        function openTemplatePicker() {
-            document.getElementById('template-picker').classList.remove('hidden'); const list = document.getElementById('template-picker-list');
-            list.innerHTML = ALL_TEMPLATES.map(t => `<button onclick="applyTemplateToAthlete('${t.id}')" class="w-full bento-card p-5 text-left group transition-all hover:border-[#0BB005]/50"><p class="font-impact italic text-lg text-white uppercase">${t.name}</p><p class="text-[9px] text-gray-600 font-black uppercase mt-1">${t.exercises.length} exercices</p></button>`).join('');
-        }
-
-        function applyTemplateToAthlete(templateId) { const template = ALL_TEMPLATES.find(t => t.id === templateId); plannedExercises = JSON.parse(JSON.stringify(template.exercises)); document.getElementById('admin-program-name').value = template.name; document.getElementById('template-picker').classList.add('hidden'); document.getElementById('selected-athlete-name').innerText = selectedAthlete.name.toUpperCase(); renderPlanned(); setAdminSubView('creator'); }
-        function loadTemplateToCreator(templateId) { const template = ALL_TEMPLATES.find(t => t.id === templateId); selectedAthlete = null; document.getElementById('selected-athlete-name').innerText = "ÉDITION DU MODÈLE"; document.getElementById('admin-program-name').value = template.name; plannedExercises = JSON.parse(JSON.stringify(template.exercises)); renderPlanned(); setAdminSubView('creator'); }
-        function selectAthleteForProgram(email, name) { selectedAthlete = email ? { email, name } : null; document.getElementById('selected-athlete-name').innerText = name.toUpperCase(); plannedExercises = []; document.getElementById('admin-program-name').value = ""; renderPlanned(); setAdminSubView('creator'); }
-
-        // --- PICKER UI ---
         function openExercisePicker() { document.getElementById('exo-picker').classList.remove('hidden'); renderPickerList(); }
         function closePicker() { document.getElementById('exo-picker').classList.add('hidden'); }
-        function setPickerTab(tab) { activeTab = tab; renderPickerList(); }
-        function filterPicker() { renderPickerList(); }
+        function setPickerTab(t) { activeTab = t; if(t === 'global') initGlobalDB(); renderPickerList(); }
 
         function renderPickerList() {
-            const list = document.getElementById('picker-list'); const search = document.getElementById('picker-search').value.toLowerCase().replace(/\s/g, ''); const source = activeTab === 'local' ? EXERCISE_LIB : GLOBAL_DB;
-            if (activeTab === 'global' && isGlobalLoading) { list.innerHTML = `<div class="py-20 flex flex-col items-center animate-spin text-[#0BB005]"><i data-lucide="refresh-cw" class="w-10 h-10"></i></div>`; return; }
-            const filtered = source.filter(e => e.name.toLowerCase().replace(/\s/g, '').includes(search));
-            list.innerHTML = filtered.slice(0, 40).map(e => `
+            const list = document.getElementById('picker-list'); 
+            const query = document.getElementById('picker-search').value.toLowerCase().trim();
+            const source = activeTab === 'local' ? EXERCISE_LIB : GLOBAL_DB;
+            
+            document.getElementById('tab-local').className = activeTab === 'local' ? "flex-1 py-3 rounded-xl bg-[#0BB005] text-black font-black text-[10px] uppercase" : "flex-1 py-3 rounded-xl text-gray-500 font-black text-[10px] uppercase";
+            document.getElementById('tab-global').className = activeTab === 'global' ? "flex-1 py-3 rounded-xl bg-[#0BB005] text-black font-black text-[10px] uppercase" : "flex-1 py-3 rounded-xl text-gray-500 font-black text-[10px] uppercase";
+
+            if(isGlobalLoading && activeTab === 'global') { list.innerHTML = `<div class="py-20 text-center animate-pulse text-[#0BB005] font-impact italic">SOURCING...</div>`; return; }
+
+            const filtered = source.filter(e => (e.name||"").toLowerCase().includes(query));
+            list.innerHTML = filtered.slice(0, 30).map(e => `
                 <div class="bento-card p-4 flex justify-between items-center">
                     <div class="flex items-center gap-4">
-                        ${e.gifUrl ? `<img src="${e.gifUrl}" class="w-14 h-14 rounded-xl object-cover bg-black/50">` : `<div class="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center text-gray-700"><i data-lucide="dumbbell"></i></div>`}
-                        <div><p class="font-impact italic text-lg text-white uppercase leading-tight">${e.name}</p><p class="text-[8px] text-gray-600 font-black uppercase mt-1">${e.muscle || e.target || '---'}</p></div>
+                        <div class="w-10 h-10 rounded-xl bg-black/50 overflow-hidden border border-white/5">${e.gifUrl ? `<img src="${e.gifUrl}" class="w-full h-full object-cover">` : `<i data-lucide="dumbbell" class="m-auto"></i>`}</div>
+                        <p class="font-impact italic text-sm text-white uppercase">${e.name}</p>
                     </div>
-                    <button onclick="importAndAddExercise(${JSON.stringify(e).replace(/"/g, '&quot;')})" class="w-11 h-11 bg-[#0BB005]/10 text-[#0BB005] rounded-2xl flex items-center justify-center transition-all hover:bg-[#0BB005] hover:text-black"><i data-lucide="plus" class="w-6 h-6"></i></button>
+                    <button onclick='addExoToProgram(${JSON.stringify(e).replace(/'/g, "&apos;")})' class="w-10 h-10 bg-[#0BB005]/10 text-[#0BB005] rounded-xl flex items-center justify-center"><i data-lucide="plus"></i></button>
                 </div>
             `).join('');
             lucide.createIcons();
+        }
+
+        function addExoToProgram(exo) {
+            plannedExercises.push({ name: exo.name, sets: 4, reps: 10, weight: 60, gifUrl: exo.gifUrl || "" });
+            closePicker(); renderPlanned();
+            if(activeTab === 'global') {
+                fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'importExercise', name: exo.name, muscle: exo.target || exo.muscle, gifUrl: exo.gifUrl, equipment: exo.equipment }) }).then(() => fetchLocalData());
+            }
         }
 
         function renderPlanned() {
             const list = document.getElementById('admin-exercise-list');
             list.innerHTML = plannedExercises.map((e, i) => `
-                <div class="bg-white/5 border border-white/10 p-5 rounded-3xl flex flex-col gap-4">
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-3">${e.gifUrl ? `<img src="${e.gifUrl}" class="w-8 h-8 rounded-lg">` : ''}<span class="text-[#0BB005] font-impact italic text-lg uppercase">${e.name}</span></div>
-                        <button onclick="plannedExercises.splice(${i}, 1); renderPlanned();" class="text-gray-700 hover:text-red-500 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    </div>
+                <div class="bg-white/5 border border-white/10 p-5 rounded-3xl space-y-4">
+                    <div class="flex justify-between items-center"><span class="text-[#0BB005] font-impact italic uppercase">${e.name}</span><button onclick="plannedExercises.splice(${i}, 1); renderPlanned();" class="text-gray-700"><i data-lucide="trash-2"></i></button></div>
                     <div class="grid grid-cols-3 gap-2">
-                        <div class="bg-black/20 rounded-2xl p-3 flex flex-col items-center"><span class="text-[8px] text-gray-600 uppercase font-black mb-1">Séries</span><input type="number" value="${e.sets}" onchange="plannedExercises[${i}].sets = parseInt(this.value)" class="bg-transparent w-full text-center font-impact text-2xl outline-none text-white"></div>
-                        <div class="bg-black/20 rounded-2xl p-3 flex flex-col items-center"><span class="text-[8px] text-gray-600 uppercase font-black mb-1">Reps</span><input type="number" value="${e.reps}" onchange="plannedExercises[${i}].reps = parseInt(this.value)" class="bg-transparent w-full text-center font-impact text-2xl outline-none text-white"></div>
-                        <div class="bg-black/20 rounded-2xl p-3 flex flex-col items-center"><span class="text-[8px] text-gray-600 uppercase font-black mb-1">Charge</span><input type="number" value="${e.weight}" onchange="plannedExercises[${i}].weight = parseInt(this.value)" class="bg-transparent w-full text-center font-impact text-2xl outline-none text-white"></div>
+                        <input type="number" value="${e.sets}" onchange="plannedExercises[${i}].sets=this.value" class="bg-black/40 rounded-2xl p-3 text-center outline-none text-white font-impact">
+                        <input type="number" value="${e.reps}" onchange="plannedExercises[${i}].reps=this.value" class="bg-black/40 rounded-2xl p-3 text-center outline-none text-white font-impact">
+                        <input type="number" value="${e.weight}" onchange="plannedExercises[${i}].weight=this.value" class="bg-black/40 rounded-2xl p-3 text-center outline-none text-white font-impact">
                     </div>
                 </div>
             `).join('');
             lucide.createIcons();
         }
 
-        // --- SAUVEGARDE ---
         async function saveNewProgram() {
-            if (!selectedAthlete) return alert("Sélectionne un athlète !");
-            const name = document.getElementById('admin-program-name').value.trim();
-            if (!name || plannedExercises.length === 0) return alert("Données incomplètes.");
-            const btn = document.getElementById('btn-save-program'); btn.disabled = true; btn.innerText = "DÉPLOYER...";
+            if(!selectedAthlete || plannedExercises.length === 0) return alert("Données manquantes");
+            setStatus(50);
             try {
-                await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'saveProgram', coachEmail: currentUser.email, userEmail: selectedAthlete.email, programName: name, exercises: plannedExercises }) });
-                alert("PROGRAMME DÉPLOYÉ AVEC SUCCÈS !"); setAdminSubView('athletes');
-            } catch (e) { alert("Erreur."); } finally { btn.disabled = false; btn.innerText = "DÉPLOYER"; }
+                await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'saveProgram', coachEmail: currentUser.email, userEmail: selectedAthlete.email, programName: document.getElementById('admin-program-name').value, exercises: plannedExercises }) });
+                setStatus(100); alert("DÉPLOYÉ !"); setAdminSubView('athletes');
+            } catch(e) { setStatus(100, true); }
         }
 
-        async function saveAsTemplate() {
-            const name = document.getElementById('admin-program-name').value.trim();
-            if (!name || plannedExercises.length === 0) return alert("Données incomplètes.");
-            try {
-                await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'saveTemplate', templateName: name, exercises: plannedExercises }) });
-                alert("MODÈLE ENREGISTRÉ !"); fetchTemplates(); setAdminSubView('templates');
-            } catch (e) { alert("Erreur."); }
-        }
-
-        // --- UTILS ---
-        function openCoachMode() { showSubView('admin'); setAdminSubView('athletes'); fetchAllUsers(); }
-        function openTemplatesView() { setAdminSubView('templates'); fetchTemplates(); }
-        function openExerciseLibrary() { activeTab = 'local'; openExercisePicker(); }
-        function showSubView(viewId) { document.querySelectorAll('.sub-view').forEach(v => v.classList.add('hidden')); document.getElementById(`view-${viewId}`).classList.remove('hidden'); lucide.createIcons(); }
-        async function fetchProgram() { try { const res = await fetch(`${SCRIPT_URL}?action=getUserProgram&email=${currentUser.email}`); userProgram = await res.json(); document.getElementById('current-program-name').innerText = userProgram.length > 0 ? userProgram[0].programName : "AUCUN PROGRAMME"; } catch (e) {} }
-        function startWorkout() { if (userProgram.length === 0) return alert("Pas de programme !"); currentExoIndex = 0; renderExo(); showSubView('training'); }
-        
+        async function fetchProgram() { try { const res = await fetch(`${SCRIPT_URL}?action=getUserProgram&email=${currentUser.email}`); userProgram = await res.json(); document.getElementById('current-program-name').innerText = userProgram.length > 0 ? userProgram[0].programName : "AUCUN PROGRAMME ACTIF"; } catch(e) {} }
+        function startWorkout() { if(userProgram.length === 0) return; currentExoIndex = 0; renderExo(); showSubView('training'); }
         function renderExo() {
-            const exo = userProgram[currentExoIndex];
-            document.getElementById('training-exo-name').innerText = exo.exo.toUpperCase();
-            const container = document.getElementById('sets-container');
-            container.innerHTML = exo ? Array.from({length: exo.sets}, (_, i) => `<div class="bento-card p-6 flex justify-between items-center fade-in"><div class="flex flex-col"><span class="text-gray-600 text-[10px] font-black uppercase mb-1">Série ${i+1}</span><span class="font-impact italic text-2xl text-white">${exo.weight}kg x ${exo.reps}</span></div><button onclick="this.classList.toggle('bg-[#0BB005]');" class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white"><i data-lucide="check" class="w-6 h-6"></i></button></div>`).join('') : "";
-            document.getElementById('btn-next-exo').innerText = currentExoIndex === userProgram.length - 1 ? "TERMINER" : "SUIVANT";
+            const e = userProgram[currentExoIndex]; if(!e) return;
+            document.getElementById('training-exo-name').innerText = e.exo.toUpperCase();
+            document.getElementById('sets-container').innerHTML = Array.from({length: e.sets}, (_, i) => `<div class="bento-card p-6 flex justify-between items-center"><div><span class="text-gray-600 text-[10px] font-black uppercase">Série ${i+1}</span><p class="font-impact italic text-2xl text-white">${e.weight}kg x ${e.reps}</p></div><button onclick="this.classList.toggle('bg-[#0BB005]')" class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center"><i data-lucide="check"></i></button></div>`).join('');
+            document.getElementById('btn-next-exo').innerText = currentExoIndex === userProgram.length -1 ? "TERMINER" : "SUIVANT";
             lucide.createIcons();
         }
-        function nextExo() { if (currentExoIndex < userProgram.length - 1) { currentExoIndex++; renderExo(); } else { alert("BRAVO !"); showSubView('dashboard'); } }
-        function prevExo() { if (currentExoIndex > 0) { currentExoIndex--; renderExo(); } }
-        function logout() { location.reload(); }
-        window.onload = () => { lucide.createIcons(); };
+        function nextExo() { if(currentExoIndex < userProgram.length - 1) { currentExoIndex++; renderExo(); } else { alert("BRAVO !"); showSubView('dashboard'); } }
+        function prevExo() { if(currentExoIndex > 0) { currentExoIndex--; renderExo(); } }
+        function filterPicker() { renderPickerList(); }
+        window.onload = () => lucide.createIcons();
     </script>
 </body>
 </html>
