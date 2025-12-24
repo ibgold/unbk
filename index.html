@@ -23,8 +23,7 @@
             color: #ffffff; 
             -webkit-tap-highlight-color: transparent;
             letter-spacing: -0.01em;
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
         }
 
         h1, h2, h3, .font-impact {
@@ -56,7 +55,6 @@
         }
 
         .btn-action:active { transform: scale(0.96); }
-
         .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -64,47 +62,37 @@
         }
 
         .bg-grain {
-            position: fixed;
-            inset: 0;
+            position: fixed; inset: 0;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.03;
-            pointer-events: none;
-            z-index: 100;
+            opacity: 0.03; pointer-events: none; z-index: 100;
         }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="pb-24 overflow-x-hidden min-h-screen">
     <div class="bg-grain"></div>
 
-    <!-- CONFIGURATION -->
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIRyIvO5-aqhTI4jy0I83okFuxDKSGTQhrE48AfQIOAhXcqs2uAnN5ULE-8MGZHR_x/exec";
-        let EXERCISE_LIB = []; // Désormais dynamique
+        let EXERCISE_LIB = []; 
+        let GLOBAL_DB = []; 
     </script>
 
     <!-- CONNEXION -->
     <div id="view-login" class="view active flex min-h-screen w-full flex-col items-center justify-center p-8">
         <div class="w-full max-w-sm fade-in flex flex-col items-center">
-            <div class="flex flex-col items-center mb-12">
+            <div class="flex flex-col items-center mb-12 text-center">
                 <div class="w-20 h-20 bg-[#0BB005] rounded-3xl flex items-center justify-center rotate-3 shadow-[0_0_40px_rgba(11,176,5,0.3)] mb-6">
                     <i data-lucide="shield-check" class="text-black w-10 h-10"></i>
                 </div>
-                <h1 class="text-4xl italic tracking-tighter text-center">UNBREAKABLE</h1>
-                <p class="text-[#0BB005] font-bold text-[10px] tracking-[0.4em] uppercase opacity-80 text-center">No Limits Only Progress</p>
+                <h1 class="text-4xl italic tracking-tighter">UNBREAKABLE</h1>
+                <p class="text-[#0BB005] font-bold text-[10px] tracking-[0.4em] uppercase opacity-80">No Limits Only Progress</p>
             </div>
             
             <div class="space-y-4 w-full">
                 <div class="bg-white/5 border border-white/10 rounded-2xl p-1">
-                    <input type="email" id="login-email" placeholder="votre@email.com" 
-                        class="w-full bg-transparent border-none rounded-2xl p-4 focus:ring-0 outline-none text-center text-white placeholder:text-gray-600">
+                    <input type="email" id="login-email" placeholder="votre@email.com" class="w-full bg-transparent border-none rounded-2xl p-4 focus:ring-0 outline-none text-center text-white placeholder:text-gray-600">
                 </div>
-                
-                <button onclick="handleLogin()" id="btn-login" 
-                    class="w-full btn-action py-5 rounded-2xl text-xl transition-all shadow-xl">
-                    S'IDENTIFIER
-                </button>
+                <button onclick="handleLogin()" id="btn-login" class="w-full btn-action py-5 rounded-2xl text-xl transition-all shadow-xl">S'IDENTIFIER</button>
             </div>
             <p id="login-error" class="text-red-500 mt-6 hidden text-center text-xs font-bold uppercase tracking-widest"></p>
         </div>
@@ -114,14 +102,10 @@
     <div id="main-app" class="view">
         <header class="px-6 py-8 flex justify-between items-center sticky top-0 z-50 bg-black/50 backdrop-blur-xl border-b border-white/5">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
-                    <i data-lucide="zap" class="text-black w-5 h-5 fill-current"></i>
-                </div>
+                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center"><i data-lucide="zap" class="text-black w-5 h-5 fill-current"></i></div>
                 <span class="font-impact text-2xl italic tracking-tighter">UNBREAKABLE</span>
             </div>
-            <button onclick="logout()" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-gray-400 hover:text-white transition-colors">
-                <i data-lucide="power" class="w-5 h-5"></i>
-            </button>
+            <button onclick="logout()" class="w-10 h-10 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-gray-400 hover:text-white transition-colors"><i data-lucide="power" class="w-5 h-5"></i></button>
         </header>
 
         <main class="p-5 max-w-2xl mx-auto space-y-6">
@@ -133,9 +117,7 @@
                 </div>
                 
                 <button onclick="startWorkout()" class="w-full bento-card p-10 flex flex-col items-center gap-4 text-center group hover:border-[#0BB005]/30 transition-all">
-                    <div class="w-16 h-16 rounded-full bg-[#0BB005] flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <i data-lucide="play" class="text-black w-8 h-8 fill-current translate-x-0.5"></i>
-                    </div>
+                    <div class="w-16 h-16 rounded-full bg-[#0BB005] flex items-center justify-center group-hover:scale-110 transition-transform"><i data-lucide="play" class="text-black w-8 h-8 fill-current translate-x-0.5"></i></div>
                     <div>
                         <h3 class="text-2xl mb-1 text-white">DÉMARRER LA SESSION</h3>
                         <p id="current-program-name" class="text-gray-500 text-xs font-medium italic uppercase">CHARGEMENT DU PROGRAMME...</p>
@@ -143,9 +125,7 @@
                 </button>
 
                 <div id="admin-section" class="hidden">
-                    <button onclick="showSubView('admin')" class="w-full bg-white/5 border border-dashed border-white/10 p-5 rounded-3xl font-impact text-xs text-gray-400 tracking-widest hover:text-white transition-all">
-                        INTERFACE COACH
-                    </button>
+                    <button onclick="showSubView('admin')" class="w-full bg-[#0BB005]/10 border border-[#0BB005]/20 p-5 rounded-3xl font-impact text-xs text-[#0BB005] tracking-widest hover:bg-[#0BB005]/20 transition-all text-center">ACCÈS COACH PRIVÉ</button>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -169,9 +149,7 @@
                     </div>
                     <div class="bg-[#0BB005] px-4 py-2 rounded-xl text-black font-impact italic text-lg" id="global-timer">00:00</div>
                 </div>
-
                 <div id="sets-container" class="space-y-4"></div>
-
                 <div class="grid grid-cols-2 gap-4 pt-6">
                     <button onclick="prevExo()" class="bg-white/5 border border-white/10 py-5 rounded-2xl font-impact italic text-gray-400">PRÉCÉDENT</button>
                     <button onclick="nextExo()" id="btn-next-exo" class="btn-action py-5 rounded-2xl text-xl">SUIVANT</button>
@@ -184,6 +162,7 @@
                     <h2 class="text-3xl italic text-[#0BB005] tracking-tighter">ÉDITEUR COACH</h2>
                     <button onclick="showSubView('dashboard')" class="text-[10px] font-black uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full text-gray-500">Fermer</button>
                 </div>
+                
                 <div class="bento-card p-8 space-y-6">
                     <div class="space-y-2">
                         <p class="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] ml-2">Identifiant Athlète</p>
@@ -193,27 +172,32 @@
                         <p class="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] ml-2">Titre du programme</p>
                         <input type="text" id="admin-program-name" placeholder="PULL SESSION A" class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 outline-none focus:border-[#0BB005] transition-colors uppercase font-impact italic tracking-tighter text-lg">
                     </div>
-                    
                     <div id="admin-exercise-list" class="space-y-3 pt-4"></div>
-                    
-                    <button onclick="openExercisePicker()" class="w-full border-2 border-dashed border-white/5 p-6 rounded-2xl text-gray-600 text-[10px] font-black tracking-widest hover:text-white transition-all">
-                        + AJOUTER UN EXERCICE
+                    <button onclick="openExercisePicker()" class="w-full border-2 border-dashed border-white/10 p-6 rounded-3xl text-gray-500 text-[10px] font-black tracking-widest hover:text-white transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> AJOUTER UN EXERCICE
                     </button>
-                    
-                    <button onclick="saveNewProgram()" id="btn-save-program" class="w-full btn-action py-6 rounded-2xl text-2xl shadow-2xl">
-                        ASSIGNER AU CLIENT
-                    </button>
+                    <button onclick="saveNewProgram()" id="btn-save-program" class="w-full btn-action py-6 rounded-3xl text-2xl shadow-2xl">ASSIGNER AU CLIENT</button>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- PICKER -->
-    <div id="exo-picker" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-8 hidden">
-        <div class="w-full max-w-md bento-card p-8 space-y-6 shadow-2xl">
-            <h3 class="text-2xl italic">BIBLIOTHÈQUE</h3>
-            <div id="picker-list" class="space-y-2 max-h-80 overflow-y-auto no-scrollbar pr-2"></div>
-            <button onclick="document.getElementById('exo-picker').classList.add('hidden')" class="w-full p-4 bg-white/5 rounded-2xl text-gray-500 font-bold">ANNULER</button>
+    <!-- PICKER (MODAL) -->
+    <div id="exo-picker" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center hidden">
+        <div class="w-full h-full max-w-md flex flex-col p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-3xl italic tracking-tighter">BIBLIOTHÈQUE</h3>
+                <button onclick="closePicker()" class="p-2 bg-white/5 rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="flex gap-2 mb-6">
+                <button onclick="setPickerTab('local')" id="tab-local" class="flex-1 py-3 rounded-2xl bg-[#0BB005] text-black font-black text-[10px] uppercase tracking-widest">Ma Base</button>
+                <button onclick="setPickerTab('global')" id="tab-global" class="flex-1 py-3 rounded-2xl bg-white/5 text-gray-500 font-black text-[10px] uppercase tracking-widest">ExerciseDB</button>
+            </div>
+            <div class="relative mb-6">
+                <input type="text" id="picker-search" oninput="filterPicker()" placeholder="Rechercher..." class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 pl-12 outline-none focus:border-[#0BB005]">
+                <i data-lucide="search" class="absolute left-4 top-4 text-gray-500 w-5 h-5"></i>
+            </div>
+            <div id="picker-list" class="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-20"></div>
         </div>
     </div>
 
@@ -224,52 +208,104 @@
         let timerInterval;
         let seconds = 0;
         let plannedExercises = [];
+        let activeTab = 'local';
 
         async function handleLogin() {
             const email = document.getElementById('login-email').value.trim();
-            const btn = document.getElementById('btn-login');
-            const err = document.getElementById('login-error');
             if (!email) return;
-
-            btn.disabled = true;
-            btn.innerText = "SÉCURISATION...";
-            err.classList.add('hidden');
-
+            const btn = document.getElementById('btn-login');
+            btn.disabled = true; btn.innerText = "SÉCURISATION...";
+            
             try {
                 const res = await fetch(`${SCRIPT_URL}?action=getUser&email=${email}`);
                 const data = await res.json();
-                
                 if (data && data.email) {
                     currentUser = data;
                     document.getElementById('view-login').classList.remove('active', 'flex');
                     document.getElementById('main-app').classList.add('active');
                     document.getElementById('user-name').innerText = data.name.toUpperCase();
                     if (data.role === 'admin') document.getElementById('admin-section').classList.remove('hidden');
-                    
-                    // Chargement des données nécessaires
                     fetchProgram();
-                    fetchExerciseLibrary(); 
+                    fetchLocalLibrary(); 
+                    initGlobalDB(); // Déclenche le relais GAS sécurisé
                 } else {
-                    err.innerText = data.error || "UTILISATEUR NON RECONNU";
-                    err.classList.remove('hidden');
+                    document.getElementById('login-error').innerText = data.error || "ERREUR";
+                    document.getElementById('login-error').classList.remove('hidden');
                 }
-            } catch (e) {
-                err.innerText = "ERREUR RÉSEAU";
-                err.classList.remove('hidden');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "S'IDENTIFIER";
-            }
+            } catch (e) { console.error(e); } finally { btn.disabled = false; btn.innerText = "S'IDENTIFIER"; }
         }
 
-        async function fetchExerciseLibrary() {
+        async function initGlobalDB() {
+            const cached = localStorage.getItem('global_exercises_cache');
+            if (cached) {
+                GLOBAL_DB = JSON.parse(cached);
+                console.log("Bibliothèque chargée du cache local.");
+                return;
+            }
+            try {
+                // On demande au script Google de faire l'appel API pour nous
+                const res = await fetch(`${SCRIPT_URL}?action=getGlobalLibrary`);
+                const data = await res.json();
+                if (data && !data.error) {
+                    GLOBAL_DB = data;
+                    localStorage.setItem('global_exercises_cache', JSON.stringify(data));
+                    console.log("Bibliothèque mise en cache sécurisée.");
+                } else {
+                    console.error("Relais GAS inaccessible ou clé manquante");
+                }
+            } catch (e) { console.error("Erreur d'initialisation bibliothèque globale"); }
+        }
+
+        async function fetchLocalLibrary() {
             try {
                 const res = await fetch(`${SCRIPT_URL}?action=getExercises`);
                 EXERCISE_LIB = await res.json();
-                console.log("Bibliothèque chargée :", EXERCISE_LIB.length, "exercices");
-            } catch (e) {
-                console.error("Erreur lors du chargement de la bibliothèque");
-            }
+            } catch (e) { console.error(e); }
+        }
+
+        function openExercisePicker() {
+            document.getElementById('exo-picker').classList.remove('hidden');
+            renderPickerList();
+        }
+
+        function closePicker() { document.getElementById('exo-picker').classList.add('hidden'); }
+
+        function setPickerTab(tab) {
+            activeTab = tab;
+            document.getElementById('tab-local').className = tab === 'local' ? 'flex-1 py-3 rounded-2xl bg-[#0BB005] text-black font-black text-[10px] uppercase tracking-widest' : 'flex-1 py-3 rounded-2xl bg-white/5 text-gray-500 font-black text-[10px] uppercase tracking-widest';
+            document.getElementById('tab-global').className = tab === 'global' ? 'flex-1 py-3 rounded-2xl bg-[#0BB005] text-black font-black text-[10px] uppercase tracking-widest' : 'flex-1 py-3 rounded-2xl bg-white/5 text-gray-500 font-black text-[10px] uppercase tracking-widest';
+            renderPickerList();
+        }
+
+        function filterPicker() { renderPickerList(); }
+
+        function renderPickerList() {
+            const list = document.getElementById('picker-list');
+            const search = document.getElementById('picker-search').value.toLowerCase();
+            const source = activeTab === 'local' ? EXERCISE_LIB : GLOBAL_DB;
+            const filtered = source.filter(e => e.name.toLowerCase().includes(search));
+            
+            list.innerHTML = filtered.slice(0, 40).map(e => `
+                <div class="bento-card p-4 flex justify-between items-center group">
+                    <div class="flex items-center gap-4">
+                        ${e.gifUrl ? `<img src="${e.gifUrl}" class="w-12 h-12 rounded-xl object-cover bg-black/50" loading="lazy">` : `<div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center"><i data-lucide="dumbbell" class="text-gray-700"></i></div>`}
+                        <div>
+                            <p class="font-impact italic tracking-tighter text-lg leading-tight uppercase">${e.name}</p>
+                            <p class="text-[10px] text-gray-600 font-black uppercase tracking-widest">${e.muscle || e.bodyPart || 'Inconnu'}</p>
+                        </div>
+                    </div>
+                    <button onclick="addPlannedFromPicker('${e.name.replace(/'/g, "\\'")}')" class="w-10 h-10 bg-[#0BB005]/10 text-[#0BB005] rounded-full flex items-center justify-center hover:bg-[#0BB005] hover:text-black transition-all">
+                        <i data-lucide="plus" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function addPlannedFromPicker(name) {
+            plannedExercises.push({ name, sets: 4, reps: 10, weight: 60 });
+            closePicker();
+            renderPlanned();
         }
 
         async function fetchProgram() {
@@ -278,9 +314,7 @@
                 const res = await fetch(`${SCRIPT_URL}?action=getUserProgram&email=${currentUser.email}`);
                 userProgram = await res.json();
                 label.innerText = userProgram.length > 0 ? userProgram[0].programName.toUpperCase() : "AUCUN PROGRAMME ASSIGNÉ";
-            } catch (e) {
-                label.innerText = "ERREUR PROGRAMME";
-            }
+            } catch (e) { label.innerText = "ERREUR PROGRAMME"; }
         }
 
         function showSubView(viewId) {
@@ -290,9 +324,8 @@
         }
 
         function startWorkout() {
-            if (userProgram.length === 0) return alert("Contactez votre coach pour un programme !");
-            currentExoIndex = 0;
-            seconds = 0;
+            if (userProgram.length === 0) return alert("Pas de programme !");
+            currentExoIndex = 0; seconds = 0;
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 seconds++;
@@ -300,8 +333,7 @@
                 const s = (seconds % 60).toString().padStart(2, '0');
                 document.getElementById('global-timer').innerText = `${m}:${s}`;
             }, 1000);
-            renderExo();
-            showSubView('training');
+            renderExo(); showSubView('training');
         }
 
         function renderExo() {
@@ -312,15 +344,12 @@
             for (let i = 1; i <= exo.sets; i++) {
                 const div = document.createElement('div');
                 div.className = "bento-card p-6 flex justify-between items-center fade-in";
-                div.style.animationDelay = `${i * 0.1}s`;
                 div.innerHTML = `
                     <div class="flex flex-col">
                         <span class="text-gray-600 text-[10px] font-black uppercase mb-1">Série ${i}</span>
                         <span class="font-impact italic text-2xl tracking-tighter">${exo.weight}kg <span class="text-xs text-gray-700 not-italic">x</span> ${exo.reps}</span>
                     </div>
-                    <button onclick="this.classList.toggle('bg-[#0BB005]'); this.classList.toggle('text-black')" class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center transition-all">
-                        <i data-lucide="check" class="w-6 h-6"></i>
-                    </button>
+                    <button onclick="this.classList.toggle('bg-[#0BB005]'); this.classList.toggle('text-black')" class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center transition-all"><i data-lucide="check" class="w-6 h-6"></i></button>
                 `;
                 container.appendChild(div);
             }
@@ -330,37 +359,13 @@
 
         function nextExo() {
             if (currentExoIndex < userProgram.length - 1) {
-                currentExoIndex++;
-                renderExo();
-                window.scrollTo(0,0);
+                currentExoIndex++; renderExo(); window.scrollTo(0,0);
             } else {
-                alert("SÉANCE TERMINÉE. BRAVO ATHLÈTE !");
-                clearInterval(timerInterval);
-                showSubView('dashboard');
+                alert("SÉANCE TERMINÉE !"); clearInterval(timerInterval); showSubView('dashboard');
             }
         }
 
         function prevExo() { if (currentExoIndex > 0) { currentExoIndex--; renderExo(); window.scrollTo(0,0); } }
-
-        function openExercisePicker() {
-            const list = document.getElementById('picker-list');
-            if (EXERCISE_LIB.length === 0) {
-                list.innerHTML = `<p class="text-gray-500 text-center py-10">Aucun exercice trouvé dans la base ExercisesDB.</p>`;
-            } else {
-                list.innerHTML = EXERCISE_LIB.map(e => `
-                    <button onclick="addPlanned('${e.name.replace(/'/g, "\\'")}')" class="w-full p-5 bg-white/5 rounded-2xl text-left font-impact italic text-lg tracking-tighter hover:bg-[#0BB005] hover:text-black transition-all">
-                        ${e.name} <span class="text-[10px] opacity-50 ml-2">(${e.muscle})</span>
-                    </button>
-                `).join('');
-            }
-            document.getElementById('exo-picker').classList.remove('hidden');
-        }
-
-        function addPlanned(name) {
-            plannedExercises.push({ name, sets: 4, reps: 10, weight: 60 });
-            document.getElementById('exo-picker').classList.add('hidden');
-            renderPlanned();
-        }
 
         function renderPlanned() {
             const list = document.getElementById('admin-exercise-list');
@@ -368,11 +373,9 @@
                 <div class="bg-white/5 border border-white/10 p-4 rounded-2xl flex justify-between items-center">
                     <div class="flex flex-col">
                         <span class="text-[#0BB005] font-impact italic tracking-tighter text-lg uppercase">${e.name}</span>
-                        <span class="text-[10px] font-black text-gray-600 uppercase tracking-widest">${e.sets}X${e.reps} - ${e.weight}KG</span>
+                        <span class="text-[10px] font-black text-gray-600 uppercase tracking-widest mt-1">${e.sets}X${e.reps} - ${e.weight}KG</span>
                     </div>
-                    <button onclick="plannedExercises.splice(${i}, 1); renderPlanned();" class="text-gray-700 hover:text-red-500 transition-colors">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i>
-                    </button>
+                    <button onclick="plannedExercises.splice(${i}, 1); renderPlanned();" class="text-gray-700 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                 </div>
             `).join('');
             lucide.createIcons();
@@ -381,39 +384,21 @@
         async function saveNewProgram() {
             const email = document.getElementById('admin-target-user').value.trim();
             const name = document.getElementById('admin-program-name').value.trim();
-            if (!email || !name || plannedExercises.length === 0) return alert("Champs incomplets.");
-            
+            if (!email || !name || plannedExercises.length === 0) return alert("Champs vides.");
             const btn = document.getElementById('btn-save-program');
             btn.disabled = true; btn.innerText = "TRANSMISSION...";
-
             try {
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    body: JSON.stringify({ 
-                        action: 'saveProgram', 
-                        coachEmail: currentUser.email, 
-                        userEmail: email, 
-                        programName: name, 
-                        exercises: plannedExercises 
-                    })
+                    body: JSON.stringify({ action: 'saveProgram', coachEmail: currentUser.email, userEmail: email, programName: name, exercises: plannedExercises })
                 });
-                alert("PROGRAMME ASSIGNÉ !");
-                plannedExercises = [];
-                document.getElementById('admin-program-name').value = "";
-                renderPlanned();
-            } catch (e) {
-                alert("Erreur lors de l'envoi.");
-            } finally {
-                btn.disabled = false; btn.innerText = "ASSIGNER AU CLIENT";
-            }
+                alert("ASSIGNÉ !"); plannedExercises = []; document.getElementById('admin-program-name').value = ""; renderPlanned();
+            } catch (e) { alert("Erreur."); } finally { btn.disabled = false; btn.innerText = "ASSIGNER"; }
         }
 
         function logout() { location.reload(); }
-        
-        window.onload = () => {
-            lucide.createIcons();
-        };
+        window.onload = () => { lucide.createIcons(); };
     </script>
 </body>
 </html>
