@@ -1,685 +1,1069 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Unbreakable Coaching | Cockpit</title>
-    
-    <!-- CONFIGURATION PWA INSTALLABLE -->
-    <link rel="manifest" href="/unbk/manifest.webmanifest">
-    <meta name="theme-color" content="#0BB005">
-    
-    <!-- META IOS APPLE -->
-    <link rel="apple-touch-icon" href="/unbk/logo.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Unbreakable">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Unbreakable Coaching | Cockpit</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,900;1,800&family=Inter:wght@400;500;600&display=swap');
-        :root { --primary: #0BB005; --primary-dark: #088404; --bg-dark: #050505; --surface: #0f0f0f; --surface-light: #161616; --border: rgba(255,255,255,0.05); }
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--bg-dark); 
-            color: #ffffff; 
-            -webkit-tap-highlight-color: transparent; 
-            letter-spacing: -0.01em; 
-            margin: 0; 
-            padding: 0; 
-            overflow-x: hidden;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
+  <!-- PWA -->
+  <link rel="manifest" href="/unbk/manifest.webmanifest">
+  <meta name="theme-color" content="#0BB005">
 
-        header {
-            padding-top: calc(1.5rem + env(safe-area-inset-top));
-            top: 0;
-            margin-top: calc(-1 * env(safe-area-inset-top));
-        }
+  <!-- iOS -->
+  <link rel="apple-touch-icon" href="/unbk/logo.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Unbreakable">
 
-        h1, h2, h3, .font-impact { font-family: 'Archivo', sans-serif; font-weight: 900; font-style: italic; text-transform: uppercase; }
-        .view { display: none; }
-        .view.active { display: block; }
-        .view.active.flex { display: flex; }
-        .bento-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .btn-action { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: black; font-family: 'Archivo', sans-serif; font-weight: 900; text-transform: uppercase; font-style: italic; }
-        .btn-action:active { transform: scale(0.96); }
-        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        .bg-grain { position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); opacity: 0.03; pointer-events: none; z-index: 100; }
-        .coach-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #4b5563; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-        .coach-nav-item.active { color: var(--primary); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .grid-layout { display: grid; gap: 8px; align-items: center; }
-        .grid-coach { grid-template-columns: 30px 1fr 1.2fr 1fr 30px; }
-        .grid-athlete { grid-template-columns: 30px 1.2fr 60px 60px 50px 40px; }
-        .input-log { background: #1a1a1a; border: 1px solid transparent; border-radius: 8px; padding: 8px 4px; text-align: center; font-family: 'Archivo', sans-serif; font-style: italic; font-weight: 800; color: white; width: 100%; font-size: 12px; }
-        .input-log:focus { border-color: var(--primary); outline: none; }
-        .set-badge { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Archivo'; font-weight: 900; font-size: 10px; cursor: pointer; transition: all 0.2s; }
-        .badge-s { background: var(--primary); color: black; }
-        .badge-w { background: #374151; color: white; }
-        .badge-d { background: #facc15; color: black; }
-        .badge-f { background: #ef4444; color: white; }
-        .tab-btn { padding: 12px 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 12px; transition: all 0.2s; color: #4b5563; }
-        .tab-btn.active { background: rgba(11, 176, 5, 0.1); color: var(--primary); }
-        .pack-header { background: linear-gradient(90deg, rgba(11,176,5,0.1) 0%, transparent 100%); border-left: 3px solid var(--primary); padding: 8px 16px; margin-bottom: 12px; border-radius: 0 12px 12px 0; }
-        
-        .fixed-bottom-nav {
-            bottom: calc(1.5rem + env(safe-area-inset-bottom));
-        }
-    </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,900;1,800&family=Inter:wght@400;500;600&display=swap');
+    :root { --primary: #0BB005; --primary-dark: #088404; --bg-dark: #050505; --surface: #0f0f0f; --border: rgba(255,255,255,0.05); }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color: #fff; margin: 0; padding: 0; overflow-x: hidden; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); -webkit-tap-highlight-color: transparent; }
+    header { padding-top: calc(1.5rem + env(safe-area-inset-top)); top: 0; margin-top: calc(-1 * env(safe-area-inset-top)); }
+    h1, h2, h3, .font-impact { font-family: 'Archivo', sans-serif; font-weight: 900; font-style: italic; text-transform: uppercase; }
+    .view { display: none; }
+    .view.active { display: block; }
+    .view.active.flex { display: flex; }
+    .bento-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .btn-action { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: black; font-family: 'Archivo', sans-serif; font-weight: 900; text-transform: uppercase; font-style: italic; }
+    .btn-action:active { transform: scale(0.96); }
+    .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    .bg-grain { position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); opacity: 0.03; pointer-events: none; z-index: 100; }
+    .coach-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #4b5563; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+    .coach-nav-item.active { color: var(--primary); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .grid-layout { display: grid; gap: 8px; align-items: center; }
+    .grid-coach { grid-template-columns: 30px 1fr 1.2fr 1fr 30px; }
+    .grid-athlete { grid-template-columns: 30px 1.2fr 60px 60px 50px 40px; }
+    .input-log { background: #1a1a1a; border: 1px solid transparent; border-radius: 8px; padding: 8px 4px; text-align: center; font-family: 'Archivo', sans-serif; font-style: italic; font-weight: 800; color: white; width: 100%; font-size: 12px; }
+    .input-log:focus { border-color: var(--primary); outline: none; }
+    .set-badge { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Archivo'; font-weight: 900; font-size: 10px; cursor: pointer; transition: all 0.2s; }
+    .badge-s { background: var(--primary); color: black; }
+    .badge-w { background: #374151; color: white; }
+    .badge-d { background: #facc15; color: black; }
+    .badge-f { background: #ef4444; color: white; }
+    .tab-btn { padding: 12px 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 12px; transition: all 0.2s; color: #4b5563; }
+    .tab-btn.active { background: rgba(11, 176, 5, 0.1); color: var(--primary); }
+    .pack-header { background: linear-gradient(90deg, rgba(11,176,5,0.1) 0%, transparent 100%); border-left: 3px solid var(--primary); padding: 8px 16px; margin-bottom: 12px; border-radius: 0 12px 12px 0; }
+    .fixed-bottom-nav { bottom: calc(1.5rem + env(safe-area-inset-bottom)); }
+    .unit-select { background: #1a1a1a; color: #0BB005; font-size: 10px; font-weight: 900; border: none; padding: 2px 6px; border-radius: 6px; outline: none; appearance: none; }
+  </style>
 </head>
+
 <body class="pb-32 min-h-screen text-white">
-    <div class="bg-grain"></div>
+  <div class="bg-grain"></div>
 
-    <div id="view-login" class="view active flex min-h-screen w-full flex-col items-center justify-center p-8 text-center">
-        <div class="w-full max-w-sm fade-in flex flex-col items-center">
-            <div class="flex flex-col items-center mb-12">
-                <div class="w-24 h-24 bg-white rounded-3xl flex items-center justify-center rotate-3 shadow-[0_0_50px_rgba(255,255,255,0.1)] mb-6 overflow-hidden">
-                    <img src="logo.png" alt="Unbreakable Logo" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150?text=U'">
-                </div>
-                <h1 class="text-4xl italic tracking-tighter text-white">UNBREAKABLE</h1>
-                <p class="text-[#0BB005] font-bold text-[10px] tracking-[0.4em] uppercase opacity-80">Strong, Defined, Unbreakable</p>
-            </div>
-            <div class="space-y-4 w-full">
-                <div class="bg-white/5 border border-white/10 rounded-2xl p-1"><input type="email" id="login-email" placeholder="votre@email.com" class="w-full bg-transparent border-none rounded-2xl p-4 focus:ring-0 outline-none text-center text-white placeholder:text-gray-600"></div>
-                <button onclick="handleLogin()" id="btn-login" class="w-full btn-action py-5 rounded-2xl text-xl shadow-xl uppercase font-impact">S'identifier</button>
-            </div>
-            <p id="login-error" class="text-red-500 mt-6 hidden text-xs font-bold uppercase tracking-widest"></p>
+  <!-- LOGIN -->
+  <div id="view-login" class="view active flex min-h-screen w-full flex-col items-center justify-center p-8 text-center">
+    <div class="w-full max-w-sm fade-in flex flex-col items-center">
+      <div class="flex flex-col items-center mb-12">
+        <div class="w-24 h-24 bg-white rounded-3xl flex items-center justify-center rotate-3 shadow-[0_0_50px_rgba(255,255,255,0.1)] mb-6 overflow-hidden">
+          <img src="logo.png" alt="Unbreakable Logo" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150?text=U'">
         </div>
+        <h1 class="text-4xl italic tracking-tighter text-white">UNBREAKABLE</h1>
+        <p class="text-[#0BB005] font-bold text-[10px] tracking-[0.4em] uppercase opacity-80">Strong, Defined, Unbreakable</p>
+      </div>
+      <div class="space-y-4 w-full">
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-1">
+          <input type="email" id="login-email" placeholder="votre@email.com"
+                 class="w-full bg-transparent border-none rounded-2xl p-4 focus:ring-0 outline-none text-center text-white placeholder:text-gray-600">
+        </div>
+        <button onclick="handleBootstrap()" id="btn-login"
+                class="w-full btn-action py-5 rounded-2xl text-xl shadow-xl uppercase font-impact">S'identifier</button>
+      </div>
+      <p id="login-error" class="text-red-500 mt-6 hidden text-xs font-bold uppercase tracking-widest"></p>
     </div>
+  </div>
 
-    <div id="main-app" class="view">
-        <header class="px-6 pb-6 flex justify-between items-center sticky top-0 z-50 bg-black/50 backdrop-blur-xl border-b border-white/5">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center overflow-hidden">
-                    <img src="logo.png" alt="Logo" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<i data-lucide=\'zap\' class=\'w-5 h-5 text-black fill-current\'></i>'">
+  <!-- APP -->
+  <div id="main-app" class="view">
+    <header class="px-6 pb-6 flex justify-between items-center sticky top-0 z-50 bg-black/50 backdrop-blur-xl border-b border-white/5">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center overflow-hidden">
+          <img src="logo.png" alt="Logo" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<i data-lucide=\'zap\' class=\'w-5 h-5 text-black fill-current\'></i>'">
+        </div>
+        <span class="font-impact text-xl italic text-white uppercase">Unbreakable</span>
+      </div>
+      <div class="flex gap-2">
+        <button id="btn-admin-access" onclick="openCoachMode()"
+                class="hidden px-4 py-2 bg-[#0BB005]/10 border border-[#0BB005]/20 rounded-xl text-[#0BB005] font-black text-[10px] uppercase tracking-widest">Cockpit</button>
+        <button onclick="location.reload()"
+                class="w-9 h-9 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-gray-400"><i data-lucide="power" class="w-4 h-4"></i></button>
+      </div>
+    </header>
+
+    <main class="p-5 max-w-2xl mx-auto space-y-6 pb-32">
+
+      <!-- DASHBOARD -->
+      <div id="view-dashboard" class="sub-view active space-y-8 fade-in">
+        <div class="space-y-1">
+          <p class="text-[#0BB005] text-[10px] font-black uppercase tracking-widest">Aujourd'hui</p>
+          <h2 class="text-4xl italic text-white">BONJOUR, <span id="user-name" class="text-[#0BB005]">---</span></h2>
+        </div>
+        <div id="athlete-sessions-list" class="space-y-10"></div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bento-card p-6 border-white/5">
+            <p class="text-gray-600 text-[10px] font-black uppercase mb-2 tracking-widest">Volume total</p>
+            <p id="dash-volume" class="text-3xl font-impact italic tracking-tighter">-- KG</p>
+          </div>
+          <div class="bento-card p-6 border-white/5">
+            <p class="text-gray-600 text-[10px] font-black uppercase mb-2 tracking-widest">Fréquence</p>
+            <p id="dash-freq" class="text-3xl font-impact italic tracking-tighter">-- S/S</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN -->
+      <div id="view-admin" class="sub-view hidden space-y-6 fade-in">
+        <div id="admin-content">
+          <div id="admin-sub-athletes" class="space-y-4">
+            <div class="flex justify-between items-center ml-1">
+              <h3 class="text-xs font-black uppercase tracking-widest text-gray-400">Ma Team</h3>
+              <button onclick="refreshBootstrap()" class="p-2 bg-white/5 rounded-lg text-[#0BB005]"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button>
+            </div>
+            <div id="athletes-list" class="space-y-3"></div>
+          </div>
+
+          <div id="admin-sub-templates" class="hidden space-y-4">
+            <div class="flex justify-between items-center ml-1">
+              <h3 class="text-xs font-black uppercase tracking-widest text-gray-400">Séances Types</h3>
+              <button onclick="openCreatorWithBlank()" class="p-2 bg-[#0BB005]/10 rounded-lg text-[#0BB005]"><i data-lucide="plus" class="w-4 h-4"></i></button>
+            </div>
+            <div id="templates-list" class="space-y-3"></div>
+          </div>
+
+          <div id="admin-sub-bundles" class="hidden space-y-4">
+            <div class="flex justify-between items-center ml-1">
+              <h3 class="text-xs font-black uppercase tracking-widest text-gray-400">Packs de Séances</h3>
+              <button onclick="openBundleCreator()" class="p-2 bg-[#0BB005]/10 rounded-lg text-[#0BB005]"><i data-lucide="plus" class="w-4 h-4"></i></button>
+            </div>
+            <div id="bundles-list" class="space-y-3"></div>
+          </div>
+
+          <div id="admin-sub-profile" class="hidden space-y-6">
+            <div class="flex items-center gap-4">
+              <button onclick="setAdminSubView('athletes')" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4"></i></button>
+              <div>
+                <h3 class="text-xl italic font-impact">Profil</h3>
+                <p id="profile-athlete-name" class="text-[10px] text-[#0BB005] font-black uppercase tracking-widest">---</p>
+              </div>
+            </div>
+            <div class="flex bg-white/5 p-1 rounded-2xl gap-1">
+              <button onclick="setProfileTab('prog')" id="tab-prog-btn" class="flex-1 tab-btn active">Prescription</button>
+              <button onclick="setProfileTab('hist')" id="tab-hist-btn" class="flex-1 tab-btn">Historique</button>
+            </div>
+            <div id="profile-prog-view" class="space-y-6">
+              <div id="profile-session-container" class="space-y-6"></div>
+              <div class="grid grid-cols-2 gap-3">
+                <button onclick="openTemplatePicker()" class="btn-action py-4 rounded-2xl text-[10px] shadow-lg uppercase font-impact italic">Séance Solo</button>
+                <button onclick="openBundlePicker()" class="bg-white/5 border border-white/10 py-4 rounded-2xl text-[10px] text-[#0BB005] font-impact italic uppercase">Pack Complet</button>
+              </div>
+            </div>
+            <div id="profile-hist-view" class="hidden space-y-6"><div id="profile-logs-container" class="space-y-4"></div></div>
+          </div>
+
+          <div id="admin-sub-creator" class="hidden space-y-6">
+            <div class="bento-card p-6 space-y-6 border-[#0BB005]/20">
+              <div class="flex items-center gap-4">
+                <button onclick="setAdminSubView(state.selectedAthlete ? 'profile' : 'templates')" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4"></i></button>
+                <div>
+                  <h3 class="text-xl italic font-impact leading-none" id="creator-title">Créateur</h3>
+                  <p id="selected-athlete-name-display" class="text-[10px] text-[#0BB005] font-black uppercase mt-1">---</p>
                 </div>
-                <span class="font-impact text-xl italic text-white uppercase">Unbreakable</span>
+              </div>
+              <input type="text" id="admin-program-name" placeholder="NOM DE LA SÉANCE"
+                     class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 outline-none focus:border-[#0BB005] font-impact italic text-lg text-white uppercase">
+              <div id="admin-exercise-list" class="space-y-6"></div>
+              <button onclick="openExercisePicker()"
+                      class="w-full border-2 border-dashed border-white/10 p-6 rounded-3xl text-gray-500 text-[10px] font-black tracking-widest hover:text-[#0BB005] flex items-center justify-center gap-2 transition-all uppercase italic">
+                <i data-lucide="plus" class="w-4 h-4"></i> Ajouter un exercice
+              </button>
+              <div class="grid grid-cols-2 gap-3 pt-4">
+                <button onclick="saveNewProgram()" id="btn-save-program" class="btn-action py-5 rounded-2xl text-lg shadow-xl uppercase italic font-impact">Déployer</button>
+                <button onclick="saveAsTemplate()" class="bg-white/5 border border-white/10 py-5 rounded-2xl text-gray-400 font-impact italic text-lg uppercase">Template</button>
+              </div>
             </div>
-            <div class="flex gap-2">
-                <button id="btn-admin-access" onclick="openCoachMode()" class="hidden px-4 py-2 bg-[#0BB005]/10 border border-[#0BB005]/20 rounded-xl text-[#0BB005] font-black text-[10px] uppercase tracking-widest">Coach Cockpit</button>
-                <button onclick="showHelp()" class="w-9 h-9 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-gray-400"><i data-lucide="help-circle" class="w-4 h-4"></i></button>
-                <button onclick="logout()" class="w-9 h-9 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-gray-400"><i data-lucide="power" class="w-4 h-4"></i></button>
+          </div>
+
+          <div id="admin-sub-bundle-creator" class="hidden space-y-6">
+            <div class="bento-card p-6 space-y-6 border-[#0BB005]/20">
+              <div class="flex items-center gap-4">
+                <button onclick="setAdminSubView('bundles')" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4"></i></button>
+                <div><h3 class="text-xl italic font-impact leading-none">Pack de Séances</h3><p class="text-[10px] text-[#0BB005] font-black uppercase mt-1">Regroupement</p></div>
+              </div>
+              <input type="text" id="bundle-creator-name" placeholder="NOM DU PACK"
+                     class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 outline-none focus:border-[#0BB005] font-impact italic text-lg text-white uppercase">
+              <div id="bundle-selected-templates" class="space-y-2"></div>
+              <button onclick="openBundleTemplatePicker()"
+                      class="w-full border-2 border-dashed border-white/10 p-5 rounded-3xl text-gray-500 text-[10px] font-black tracking-widest hover:text-[#0BB005] flex items-center justify-center gap-2 transition-all uppercase italic">
+                <i data-lucide="plus" class="w-4 h-4"></i> Ajouter une séance type
+              </button>
+              <button onclick="saveBundle()" id="btn-save-bundle" class="w-full btn-action py-5 rounded-2xl text-lg shadow-xl uppercase italic font-impact">Enregistrer le Pack</button>
             </div>
+          </div>
+        </div>
+
+        <!-- NAV COACH -->
+        <div class="fixed-bottom-nav fixed left-5 right-5 h-20 bento-card bg-black/80 backdrop-blur-2xl border-white/10 flex items-center justify-around px-6 z-[60] shadow-2xl">
+          <button onclick="setAdminSubView('athletes')" id="nav-btn-athletes" class="coach-nav-item active"><i data-lucide="users" class="w-6 h-6"></i><span>Team</span></button>
+          <button onclick="openTemplatesView()" id="nav-btn-templates" class="coach-nav-item"><i data-lucide="layout" class="w-6 h-6"></i><span>Séances</span></button>
+          <button onclick="setAdminSubView('bundles')" id="nav-btn-bundles" class="coach-nav-item"><i data-lucide="package" class="w-6 h-6"></i><span>Packs</span></button>
+          <button onclick="openExerciseLibrary()" class="coach-nav-item"><i data-lucide="book-open" class="w-6 h-6"></i><span>Biblio</span></button>
+        </div>
+      </div>
+
+      <!-- TRAINING -->
+      <div id="view-training" class="sub-view hidden space-y-6 fade-in">
+        <header class="flex justify-between items-center sticky top-0 z-40 bg-black/80 backdrop-blur-lg py-2 rounded-2xl">
+          <div>
+            <p class="text-[#0BB005] text-[10px] font-black uppercase tracking-[0.2em] leading-none">En cours</p>
+            <h2 class="text-2xl italic font-impact text-white uppercase mt-1" id="training-session-name">Ma Séance</h2>
+          </div>
+          <div class="flex flex-col items-end">
+            <div class="bg-[#0BB005] px-3 py-1.5 rounded-xl text-black font-impact italic text-base shadow-[0_0_15px_rgba(11,176,5,0.2)]" id="global-timer">00:00</div>
+          </div>
         </header>
+        <div id="workout-list-container" class="space-y-8"></div>
+        <div class="pt-10 pb-20"><button onclick="requestFinishWorkout()" class="w-full btn-action py-6 rounded-3xl text-xl font-impact italic uppercase">Terminer la séance</button></div>
+      </div>
+    </main>
+  </div>
 
-        <main class="p-5 max-w-2xl mx-auto space-y-6 pb-32">
-            <div id="view-dashboard" class="sub-view active space-y-8 fade-in text-center sm:text-left">
-                <div class="space-y-1"><p class="text-[#0BB005] text-[10px] font-black uppercase tracking-widest">Aujourd'hui</p><h2 class="text-4xl italic text-white">BONJOUR, <span id="user-name" class="text-[#0BB005]">ATHLÈTE</span></h2></div>
-                <div id="athlete-sessions-list" class="space-y-10"></div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bento-card p-6 border-white/5"><p class="text-gray-600 text-[10px] font-black uppercase mb-2 tracking-widest">Volume total</p><p id="dash-volume" class="text-3xl font-impact italic tracking-tighter">-- KG</p></div>
-                    <div class="bento-card p-6 border-white/5"><p class="text-gray-600 text-[10px] font-black uppercase mb-2 tracking-widest">Fréquence</p><p id="dash-freq" class="text-3xl font-impact italic tracking-tighter">-- S/S</p></div>
+  <!-- MODALS / PICKERS -->
+  <div id="exo-picker" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center hidden text-white">
+    <div class="w-full h-full max-w-md flex flex-col p-6 overflow-hidden">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-3xl italic font-impact uppercase">Bibliothèque</h3>
+        <button onclick="closePicker()" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="flex bg-white/5 p-1 rounded-2xl gap-1 mb-6">
+        <button onclick="setPickerTab('local')" id="tab-local" class="flex-1 py-3 rounded-xl bg-[#0BB005] text-black font-black text-[10px] uppercase">Ma Base</button>
+        <button onclick="setPickerTab('global')" id="tab-global" class="flex-1 py-3 rounded-xl text-gray-500 font-black text-[10px] uppercase">Cloud Free</button>
+      </div>
+      <input type="text" id="picker-search" oninput="filterPicker()" placeholder="Rechercher..." class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 mb-6 outline-none focus:border-[#0BB005] text-white">
+      <div id="picker-list" class="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-20"></div>
+    </div>
+  </div>
+
+  <div id="template-picker" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center hidden text-white">
+    <div class="w-full h-full max-w-md flex flex-col p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-3xl italic font-impact uppercase">Séance type</h3>
+        <button onclick="document.getElementById('template-picker').classList.add('hidden')" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white"><i data-lucide="x"></i></button>
+      </div>
+      <div id="template-picker-list" class="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-20"></div>
+    </div>
+  </div>
+
+  <div id="bundle-picker" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center hidden text-white">
+    <div class="w-full h-full max-w-md flex flex-col p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-3xl italic font-impact uppercase">Choisir un Pack</h3>
+        <button onclick="document.getElementById('bundle-picker').classList.add('hidden')" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white"><i data-lucide="x"></i></button>
+      </div>
+      <div id="bundle-picker-list" class="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-20 text-white"></div>
+    </div>
+  </div>
+
+  <div id="exo-detail-modal" class="fixed inset-0 z-[110] bg-black/95 backdrop-blur-2xl flex items-center justify-center hidden text-white">
+    <div class="w-full h-full max-w-md flex flex-col p-6 overflow-y-auto no-scrollbar">
+      <div class="flex justify-end mb-4 sticky top-0 z-20"><button onclick="closeExoDetail()" class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-white"><i data-lucide="x"></i></button></div>
+      <div id="exo-detail-content" class="space-y-6 pb-20 text-white"></div>
+    </div>
+  </div>
+
+  <div id="confirm-modal" class="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex items-center justify-center hidden p-8">
+    <div class="bento-card p-8 w-full max-sm text-center space-y-6">
+      <h3 id="confirm-title" class="text-2xl font-impact italic">Confirmation</h3>
+      <p id="confirm-text" class="text-gray-400 text-sm">---</p>
+      <div class="grid grid-cols-2 gap-4">
+        <button id="confirm-no" class="bg-white/5 border border-white/10 py-4 rounded-xl text-gray-500 font-bold text-xs uppercase">Annuler</button>
+        <button id="confirm-yes" class="bg-red-500 text-white py-4 rounded-xl font-bold text-xs uppercase">Confirmer</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIRyIvO5-aqhTI4jy0I83okFuxDKSGTQhrE48AfQIOAhXcqs2uAnN5ULE-8MGZHR_x/exec";
+
+    // PWA SW (GitHub Pages scope)
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/unbk/sw.js", { scope: "/unbk/" })
+          .then(reg => console.log("SW registered", reg))
+          .catch(err => console.log("SW register failed", err));
+      });
+    }
+
+    let state = {
+      user: null,
+      program: [],
+      exercises: [],
+      templates: [],
+      bundles: [],
+      allUsers: [],
+      GLOBAL_DB: [],
+      activeTab: "local",
+
+      currentSessionId: null,
+      workoutSeconds: 0,
+      globalTimerInterval: null,
+
+      // edition
+      editingTemplateId: null,
+      editingBundleId: null,
+
+      // coach context
+      selectedAthlete: null,
+      plannedExercises: [],
+      bundleDraftTemplates: [],
+
+      // athlete workout
+      activeWorkout: []
+    };
+
+    const SET_TYPES = { 'S': { label: 'S', class: 'badge-s' }, 'W': { label: 'W', class: 'badge-w' }, 'D': { label: 'D', class: 'badge-d' }, 'F': { label: 'F', class: 'badge-f' } };
+    const LOAD_UNITS = [{ id: 'kg', label: 'KG' }, { id: 'percent', label: '%' }, { id: 'rpe', label: 'RPE' }, { id: 'bw', label: 'BW' }];
+
+    function getFirstImg(data) {
+      if (!data) return '';
+      try { const p = JSON.parse(data); return Array.isArray(p) ? p[0] : p; }
+      catch (e) { return data; }
+    }
+
+    function customConfirm(title, text, onYes) {
+      const modal = document.getElementById('confirm-modal');
+      document.getElementById('confirm-title').innerText = title;
+      document.getElementById('confirm-text').innerText = text;
+      modal.classList.remove('hidden');
+      document.getElementById('confirm-yes').onclick = () => { modal.classList.add('hidden'); onYes(); };
+      document.getElementById('confirm-no').onclick = () => { modal.classList.add('hidden'); };
+    }
+
+    async function post(action, data) {
+      return fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, ...data })
+      }).then(r => r.json());
+    }
+
+    // --- BOOTSTRAP ---
+    async function handleBootstrap(emailOverride) {
+      const email = (emailOverride || state.user?.email || document.getElementById('login-email')?.value || '').trim();
+      if (!email) return;
+
+      const btn = document.getElementById('btn-login');
+      if (btn) { btn.disabled = true; btn.innerText = "CONNEXION..."; }
+
+      try {
+        const res = await fetch(`${SCRIPT_URL}?action=getBootstrap&email=${encodeURIComponent(email)}`);
+        const data = await res.json();
+        if (data.error) {
+          document.getElementById('login-error').innerText = String(data.error).toUpperCase();
+          document.getElementById('login-error').classList.remove('hidden');
+          return;
+        }
+
+        state.user = data.user;
+        state.program = data.program || [];
+        state.exercises = data.exercises || [];
+        state.templates = data.templates || [];
+        state.bundles = data.bundles || [];
+        state.allUsers = data.allUsers || [];
+
+        initApp();
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerText = "S'IDENTIFIER"; }
+      }
+    }
+
+    async function refreshBootstrap() {
+      if (!state.user?.email) return handleBootstrap();
+      // Soft refresh: recharge les datas sans repasser par l’écran login
+      try {
+        const res = await fetch(`${SCRIPT_URL}?action=getBootstrap&email=${encodeURIComponent(state.user.email)}`);
+        const data = await res.json();
+        if (!data || data.error) return;
+        state.program = data.program || [];
+        state.exercises = data.exercises || [];
+        state.templates = data.templates || [];
+        state.bundles = data.bundles || [];
+        state.allUsers = data.allUsers || [];
+
+        // Re-render selon la vue courante
+        const isAdmin = !document.getElementById('view-admin')?.classList.contains('hidden');
+        if (isAdmin) {
+          // conserve la subview visible si possible
+          // (ré-rendu léger: listes)
+          renderAthletes();
+          renderTemplates();
+          renderBundles();
+        } else {
+          renderAthleteDashboard();
+        }
+        lucide.createIcons();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function initApp() {
+      document.getElementById('view-login').classList.remove('active', 'flex');
+      document.getElementById('main-app').classList.add('active');
+      document.getElementById('user-name').innerText = (state.user?.name || '---').toUpperCase();
+
+      const role = String(state.user?.role || '').toLowerCase().trim();
+      if (role === 'admin' || role === 'coach') {
+        document.getElementById('btn-admin-access').classList.remove('hidden');
+      }
+
+      renderAthleteDashboard();
+      lucide.createIcons();
+    }
+
+    // --- NAVIGATION ---
+    function showSubView(id) {
+      document.querySelectorAll('.sub-view').forEach(v => v.classList.add('hidden'));
+      document.getElementById(`view-${id}`).classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function setAdminSubView(view) {
+      document.querySelectorAll('#admin-content > div').forEach(d => d.classList.add('hidden'));
+      document.getElementById(`admin-sub-${view}`).classList.remove('hidden');
+
+      document.getElementById('nav-btn-athletes').classList.toggle('active', view === 'athletes');
+      document.getElementById('nav-btn-templates').classList.toggle('active', view === 'templates');
+      document.getElementById('nav-btn-bundles').classList.toggle('active', view === 'bundles');
+
+      if (view === 'athletes') renderAthletes();
+      if (view === 'templates') renderTemplates();
+      if (view === 'bundles') renderBundles();
+
+      lucide.createIcons();
+    }
+
+    function openCoachMode() { showSubView('admin'); setAdminSubView('athletes'); }
+    function openTemplatesView() { setAdminSubView('templates'); }
+
+    // --- ATHLETE DASHBOARD ---
+    function renderAthleteDashboard() {
+      const container = document.getElementById('athlete-sessions-list');
+      if (!container) return;
+
+      if (!state.program || state.program.length === 0) {
+        container.innerHTML = `<div class="py-20 text-center italic text-xs uppercase font-black">Aucune séance active</div>`;
+        return;
+      }
+
+      const packsMap = new Map();
+      state.program.forEach(exo => {
+        const bId = exo.bundleId || "solo";
+        if (!packsMap.has(bId)) packsMap.set(bId, { name: exo.bundleName || "Séances Solo", sessions: new Map() });
+        const pack = packsMap.get(bId);
+        if (!pack.sessions.has(exo.programId)) pack.sessions.set(exo.programId, { name: exo.programName, exos: [] });
+        pack.sessions.get(exo.programId).exos.push(exo);
+      });
+
+      container.innerHTML = Array.from(packsMap.values()).map(pack => `
+        <div class="space-y-4">
+          <div class="pack-header">
+            <p class="text-[9px] font-black uppercase tracking-[0.3em] text-[#0BB005] opacity-80">${pack.name === "Séances Solo" ? "Individuel" : "Programme"}</p>
+            <h3 class="text-xl font-impact italic text-white uppercase">${pack.name}</h3>
+          </div>
+          <div class="space-y-3">
+            ${Array.from(pack.sessions.entries()).map(([id, s]) => `
+              <button onclick="startSession('${id}')" class="w-full bento-card p-6 flex items-center justify-between group text-white">
+                <div class="flex items-center gap-4">
+                  <div class="w-12 h-12 rounded-2xl bg-[#0BB005]/10 flex items-center justify-center text-[#0BB005] group-hover:bg-[#0BB005] group-hover:text-black">
+                    <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                  </div>
+                  <div class="text-left">
+                    <h3 class="font-impact italic text-xl uppercase">${s.name}</h3>
+                    <p class="text-[9px] text-gray-600 font-black uppercase">${s.exos.length} exercices</p>
+                  </div>
                 </div>
+                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-800"></i>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      updateDashboardStats();
+      lucide.createIcons();
+    }
+
+    async function updateDashboardStats() {
+      try {
+        const res = await fetch(`${SCRIPT_URL}?action=getUserLogs&email=${encodeURIComponent(state.user.email)}`);
+        const logs = await res.json();
+        if (logs && logs.length > 0) {
+          const totalVolume = logs.reduce((sum, l) => sum + ((parseFloat(l.weight) || 0) * (parseInt(l.reps, 10) || 0)), 0);
+          document.getElementById('dash-volume').innerText = `${Math.round(totalVolume)} KG`;
+
+          const last7Days = new Date(); last7Days.setDate(last7Days.getDate() - 7);
+          const uniqueSessions = new Set(
+            logs.filter(l => new Date(l.date) > last7Days).map(l => l.sessionId || new Date(l.date).toDateString())
+          );
+          document.getElementById('dash-freq').innerText = `${uniqueSessions.size} S/S`;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // --- TRAINING ---
+    function startSession(id) {
+      const f = state.program.filter(x => x.programId === id);
+      if (!f.length) return;
+
+      state.activeWorkout = JSON.parse(JSON.stringify(f));
+      state.activeWorkout.forEach(exo => {
+        exo.doneStatus = Array(exo.setsData.length).fill(false);
+        exo.actuals = exo.setsData.map(s => ({ weight: s.weight, reps: '', rpe: s.rpe || '', type: s.type }));
+      });
+
+      startWorkout();
+    }
+
+    function startWorkout() {
+      state.currentSessionId = 'SESSION-' + Date.now();
+      state.workoutSeconds = 0;
+      clearInterval(state.globalTimerInterval);
+
+      state.globalTimerInterval = setInterval(() => {
+        state.workoutSeconds++;
+        const m = Math.floor(state.workoutSeconds / 60).toString().padStart(2,'0');
+        const s = (state.workoutSeconds % 60).toString().padStart(2,'0');
+        document.getElementById('global-timer').innerText = `${m}:${s}`;
+      }, 1000);
+
+      document.getElementById('training-session-name').innerText = state.activeWorkout[0].programName;
+      renderFullWorkout();
+      showSubView('training');
+      window.scrollTo(0,0);
+    }
+
+    function renderFullWorkout() {
+      const container = document.getElementById('workout-list-container');
+      if (!container) return;
+
+      container.innerHTML = state.activeWorkout.map((exo, exoIdx) => {
+        const currentUnit = LOAD_UNITS.find(u => u.id === (exo.loadType || 'kg')) || LOAD_UNITS[0];
+
+        return `
+          <div class="space-y-4 text-left">
+            <div class="flex items-center gap-4" onclick='showExoDetail(${JSON.stringify(exo).replace(/'/g, "&apos;")})'>
+              <img src="${getFirstImg(exo.gifUrl)}" class="w-14 h-14 rounded-2xl object-cover bg-black border border-white/5">
+              <h3 class="text-xl italic font-impact uppercase leading-none">${exo.exo}</h3>
             </div>
 
-            <div id="view-admin" class="sub-view hidden space-y-6 fade-in text-left">
-                <div id="admin-content">
-                    <div id="admin-sub-athletes" class="space-y-4">
-                        <div class="flex justify-between items-center ml-1"><h3 class="text-xs font-black uppercase tracking-widest text-gray-400">Ma Team</h3><button onclick="fetchAllUsers()" class="p-2 bg-white/5 rounded-lg text-[#0BB005]"><i data-lucide="refresh-cw" class="w-4 h-4"></i></button></div>
-                        <div id="athletes-list" class="space-y-3"></div>
-                    </div>
-                    <div id="admin-sub-templates" class="hidden space-y-4">
-                        <div class="flex justify-between items-center ml-1"><h3 class="text-xs font-black uppercase tracking-widest text-gray-400">Séances Types</h3><button onclick="openCreatorWithBlank()" class="p-2 bg-[#0BB005]/10 rounded-lg text-[#0BB005]"><i data-lucide="plus" class="w-4 h-4"></i></button></div>
-                        <div id="templates-list" class="space-y-3"></div>
-                    </div>
-                    <div id="admin-sub-bundles" class="hidden space-y-4">
-                        <div class="flex justify-between items-center ml-1"><h3 class="text-xs font-black uppercase tracking-widest text-gray-400">Packs de Séances</h3><button onclick="openBundleCreator()" class="p-2 bg-[#0BB005]/10 rounded-lg text-[#0BB005]"><i data-lucide="plus" class="w-4 h-4"></i></button></div>
-                        <div id="bundles-list" class="space-y-3"></div>
-                    </div>
-                    <div id="admin-sub-profile" class="hidden space-y-6">
-                        <div class="flex items-center gap-4">
-                            <button onclick="setAdminSubView('athletes')" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4"></i></button>
-                            <div><h3 class="text-xl italic font-impact">Profil</h3><p id="profile-athlete-name" class="text-[10px] text-[#0BB005] font-black uppercase tracking-widest">---</p></div>
-                        </div>
-                        <div class="flex bg-white/5 p-1 rounded-2xl gap-1">
-                            <button onclick="setProfileTab('prog')" id="tab-prog-btn" class="flex-1 tab-btn active">Prescription</button>
-                            <button onclick="setProfileTab('hist')" id="tab-hist-btn" class="flex-1 tab-btn">Historique</button>
-                        </div>
-                        <div id="profile-prog-view" class="space-y-6">
-                            <div id="profile-session-container" class="space-y-6"></div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <button onclick="openTemplatePicker()" class="btn-action py-4 rounded-2xl text-[10px] shadow-lg uppercase font-impact italic">Séance Solo</button>
-                                <button onclick="openBundlePicker()" class="bg-white/5 border border-white/10 py-4 rounded-2xl text-[10px] text-[#0BB005] font-impact italic uppercase">Pack Complet</button>
-                            </div>
-                        </div>
-                        <div id="profile-hist-view" class="hidden space-y-6"><div id="profile-logs-container" class="space-y-4"></div></div>
-                    </div>
-                    <div id="admin-sub-creator" class="hidden space-y-6">
-                        <div class="bento-card p-6 space-y-6 border-[#0BB005]/20">
-                            <div class="flex items-center gap-4"><button onclick="setAdminSubView('templates')" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4"></i></button><div><h3 class="text-xl italic font-impact leading-none">Créateur</h3><p id="selected-athlete-name" class="text-[10px] text-[#0BB005] font-black uppercase mt-1">---</p></div></div>
-                            <input type="text" id="admin-program-name" placeholder="NOM DE LA SÉANCE" class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 outline-none focus:border-[#0BB005] font-impact italic text-lg text-white uppercase">
-                            <div id="admin-exercise-list" class="space-y-6"></div>
-                            <button onclick="openExercisePicker()" class="w-full border-2 border-dashed border-white/10 p-6 rounded-3xl text-gray-500 text-[10px] font-black tracking-widest hover:text-[#0BB005] flex items-center justify-center gap-2 transition-all uppercase italic"><i data-lucide="plus" class="w-4 h-4"></i> Ajouter un exercice</button>
-                            <div class="grid grid-cols-2 gap-3 pt-4"><button onclick="saveNewProgram()" id="btn-save-program" class="btn-action py-5 rounded-2xl text-lg shadow-xl uppercase italic font-impact">Déployer</button><button onclick="saveAsTemplate()" class="bg-white/5 border border-white/10 py-5 rounded-2xl text-gray-400 font-impact italic text-lg uppercase">Template</button></div>
-                        </div>
-                    </div>
-                    <div id="admin-sub-bundle-creator" class="hidden space-y-6">
-                        <div class="bento-card p-6 space-y-6 border-[#0BB005]/20">
-                            <div class="flex items-center gap-4"><button onclick="setAdminSubView('bundles')" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400"><i data-lucide="arrow-left" class="w-4 h-4"></i></button><div><h3 class="text-xl italic font-impact leading-none">Nouveau Pack</h3><p class="text-[10px] text-[#0BB005] font-black uppercase mt-1">Regroupement</p></div></div>
-                            <input type="text" id="bundle-creator-name" placeholder="NOM DU PACK" class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 outline-none focus:border-[#0BB005] font-impact italic text-lg text-white uppercase">
-                            <div id="bundle-selected-templates" class="space-y-2"></div>
-                            <button onclick="openBundleTemplatePicker()" class="w-full border-2 border-dashed border-white/10 p-5 rounded-3xl text-gray-500 text-[10px] font-black tracking-widest hover:text-[#0BB005] flex items-center justify-center gap-2 transition-all uppercase italic"><i data-lucide="plus" class="w-4 h-4"></i> Ajouter une séance type</button>
-                            <button onclick="saveBundle()" id="btn-save-bundle" class="w-full btn-action py-5 rounded-2xl text-lg shadow-xl uppercase italic font-impact">Enregistrer le Pack</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="fixed-bottom-nav fixed left-5 right-5 h-20 bento-card bg-black/80 backdrop-blur-2xl border-white/10 flex items-center justify-around px-6 z-[60] shadow-2xl">
-                    <button onclick="setAdminSubView('athletes')" id="nav-btn-athletes" class="coach-nav-item active"><i data-lucide="users" class="w-6 h-6"></i><span>Team</span></button>
-                    <button onclick="openTemplatesView()" id="nav-btn-templates" class="coach-nav-item"><i data-lucide="layout" class="w-6 h-6"></i><span>Séances</span></button>
-                    <button onclick="setAdminSubView('bundles')" id="nav-btn-bundles" class="coach-nav-item"><i data-lucide="package" class="w-6 h-6"></i><span>Packs</span></button>
-                    <button onclick="openExerciseLibrary()" class="coach-nav-item"><i data-lucide="book-open" class="w-6 h-6"></i><span>Biblio</span></button>
-                </div>
-            </div>
-
-            <div id="view-training" class="sub-view hidden space-y-6 fade-in text-left">
-                <header class="flex justify-between items-center sticky top-[0px] z-40 bg-black/80 backdrop-blur-lg py-2 rounded-2xl">
-                    <div><p class="text-[#0BB005] text-[10px] font-black uppercase tracking-[0.2em] leading-none">En cours</p><h2 class="text-2xl italic font-impact text-white uppercase mt-1" id="training-session-name">Ma Séance</h2></div>
-                    <div class="flex flex-col items-end"><div class="bg-[#0BB005] px-3 py-1.5 rounded-xl text-black font-impact italic text-base shadow-[0_0_15px_rgba(11,176,5,0.2)]" id="global-timer">00:00</div></div>
-                </header>
-                <div id="workout-list-container" class="space-y-8"></div>
-                <div id="rest-timer-container" class="hidden fixed bottom-32 left-5 right-5 z-[70] bento-card p-6 border-[#0BB005]/40 bg-black/90 backdrop-blur-2xl flex flex-col items-center gap-2">
-                    <div class="text-4xl font-impact italic text-white" id="rest-timer-display">90s</div>
-                    <div class="flex gap-6 mt-2">
-                        <button onclick="adjustRest(-15)" class="text-gray-500 font-black text-[10px] uppercase">-15s</button>
-                        <button onclick="skipRest()" class="bg-[#0BB005]/20 text-[#0BB005] px-6 py-2 rounded-xl text-[10px] font-black uppercase italic border border-[#0BB005]/30">Passer</button>
-                        <button onclick="adjustRest(15)" class="text-gray-500 font-black text-[10px] uppercase">+15s</button>
-                    </div>
-                </div>
-                <div class="pt-10 pb-20"><button onclick="requestFinishWorkout()" class="w-full btn-action py-6 rounded-3xl text-xl font-impact italic uppercase">Terminer la séance</button></div>
-            </div>
-        </main>
-    </div>
-
-    <!-- MODALES -->
-    <div id="exo-picker" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center hidden text-white">
-        <div class="w-full h-full max-w-md flex flex-col p-6 overflow-hidden">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-3xl italic font-impact uppercase">Bibliothèque</h3><button onclick="closePicker()" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white"><i data-lucide="x" class="w-5 h-5"></i></button></div>
-            <div class="flex bg-white/5 p-1 rounded-2xl gap-1 mb-6"><button onclick="setPickerTab('local')" id="tab-local" class="flex-1 py-3 rounded-xl bg-[#0BB005] text-black font-black text-[10px] uppercase">Ma Base</button><button onclick="setPickerTab('global')" id="tab-global" class="flex-1 py-3 rounded-xl text-gray-500 font-black text-[10px] uppercase">Cloud Free</button></div>
-            <input type="text" id="picker-search" oninput="filterPicker()" placeholder="Rechercher..." class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 mb-6 outline-none focus:border-[#0BB005] text-white">
-            <div id="picker-list" class="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-20"></div>
-        </div>
-    </div>
-
-    <div id="template-picker" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center hidden text-white">
-        <div class="w-full h-full max-w-md flex flex-col p-6">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-3xl italic font-impact uppercase">Séance type</h3><button onclick="document.getElementById('template-picker').classList.add('hidden')" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white"><i data-lucide="x"></i></button></div>
-            <div id="template-picker-list" class="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-20 text-white"></div>
-        </div>
-    </div>
-
-    <div id="bundle-picker" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center hidden text-white">
-        <div class="w-full h-full max-w-md flex flex-col p-6">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-3xl italic font-impact uppercase text-white">Choisir un Pack</h3><button onclick="document.getElementById('bundle-picker').classList.add('hidden')" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white"><i data-lucide="x"></i></button></div>
-            <div id="bundle-picker-list" class="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-20 text-white"></div>
-        </div>
-    </div>
-
-    <div id="exo-detail-modal" class="fixed inset-0 z-[110] bg-black/95 backdrop-blur-2xl flex items-center justify-center hidden text-white">
-        <div class="w-full h-full max-w-md flex flex-col p-6 overflow-y-auto no-scrollbar">
-            <div class="flex justify-end mb-4 sticky top-0 z-20"><button onclick="closeExoDetail()" class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center text-white"><i data-lucide="x"></i></button></div>
-            <div id="exo-detail-content" class="space-y-6 pb-20 text-white"></div>
-        </div>
-    </div>
-
-    <div id="confirm-modal" class="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex items-center justify-center hidden p-8">
-        <div class="bento-card p-8 w-full max-sm text-center space-y-6">
-            <h3 id="confirm-title" class="text-2xl font-impact italic">Confirmation</h3>
-            <p id="confirm-text" class="text-gray-400 text-sm">---</p>
-            <div class="grid grid-cols-2 gap-4"><button id="confirm-no" class="bg-white/5 border border-white/10 py-4 rounded-xl text-gray-500 font-bold text-xs uppercase">Annuler</button><button id="confirm-yes" class="bg-red-500 text-white py-4 rounded-xl font-bold text-xs uppercase">Confirmer</button></div>
-        </div>
-    </div>
-
-    <div id="workout-summary-modal" class="fixed inset-0 z-[300] bg-black/98 backdrop-blur-3xl flex items-center justify-center hidden p-6">
-        <div class="w-full max-w-sm text-center space-y-8 fade-in">
-            <div class="w-24 h-24 bg-[#0BB005] rounded-full mx-auto flex items-center justify-center shadow-[0_0_50px_rgba(11,176,5,0.5)]"><i data-lucide="check-circle" class="w-12 h-12 text-black"></i></div>
-            <h3 class="text-4xl font-impact italic uppercase">Session Terminée !</h3>
-            <button onclick="closeWorkoutSummary()" class="w-full btn-action py-5 rounded-2xl text-xl font-impact italic uppercase">Dashboard</button>
-        </div>
-    </div>
-
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIRyIvO5-aqhTI4jy0I83okFuxDKSGTQhrE48AfQIOAhXcqs2uAnN5ULE-8MGZHR_x/exec";
-        let currentUser = null, userProgram = [], ALL_TEMPLATES = [], ALL_BUNDLES = [], EXERCISE_LIB = [], GLOBAL_DB = [], ALL_USERS = [], selectedAthlete = null, plannedExercises = [], bundleDraftTemplates = [], athleteLogs = [], workoutSeconds = 0, restTimerInterval, restSecondsRemaining = 0, globalTimerInterval, currentSessionId = null, activeTab = 'local';
-
-        const SET_TYPES = { 'S': { label: 'S', class: 'badge-s' }, 'W': { label: 'W', class: 'badge-w' }, 'D': { label: 'D', class: 'badge-d' }, 'F': { label: 'F', class: 'badge-f' } };
-        const LOAD_UNITS = [{ id: 'kg', label: 'KG' }, { id: 'percent', label: '%' }, { id: 'rpe', label: 'RPE' }, { id: 'bw', label: 'BW' }];
-
-        // ENREGISTREMENT SERVICE WORKER PWA (GH PAGES COMPATIBLE)
-        if ("serviceWorker" in navigator) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker.register("/unbk/sw.js", { scope: "/unbk/" })
-                    .then(reg => console.log('SW Registered', reg))
-                    .catch(err => console.log('SW Registration Failed', err));
-            });
-        }
-
-        function getFirstImg(data) { if (!data) return ''; try { const p = JSON.parse(data); return Array.isArray(p) ? p[0] : p; } catch(e) { return data; } }
-        function getAllImgs(data) { if (!data) return []; try { const p = JSON.parse(data); return Array.isArray(p) ? p : [p]; } catch(e) { return [data]; } }
-        
-        function customConfirm(title, text, onYes) {
-            const modal = document.getElementById('confirm-modal');
-            if(!modal) return;
-            document.getElementById('confirm-title').innerText = title;
-            document.getElementById('confirm-text').innerText = text;
-            modal.classList.remove('hidden');
-            document.getElementById('confirm-yes').onclick = () => { modal.classList.add('hidden'); onYes(); };
-            document.getElementById('confirm-no').onclick = () => { modal.classList.add('hidden'); };
-        }
-
-        async function post(action, data) {
-            return fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action, ...data })
-            }).then(r => r.json());
-        }
-
-        async function handleLogin() {
-            const email = document.getElementById('login-email').value.trim();
-            if (!email) return;
-            const btn = document.getElementById('btn-login'); 
-            btn.disabled = true; btn.innerText = "CONNEXION...";
-            try {
-                const res = await fetch(`${SCRIPT_URL}?action=getUser&email=${email}`);
-                const data = await res.json();
-                if (data && data.email) {
-                    currentUser = data;
-                    document.getElementById('view-login').classList.remove('active', 'flex');
-                    document.getElementById('main-app').classList.add('active');
-                    document.getElementById('user-name').innerText = data.name.toUpperCase();
-                    fetchLocalLibrary(); fetchTemplates(); fetchBundles();
-                    const role = (data.role || "").toLowerCase().trim();
-                    if (role === 'admin' || role === 'coach') openCoachMode(); else fetchProgram();
-                } else {
-                    document.getElementById('login-error').innerText = "IDENTIFIANT INCONNU";
-                    document.getElementById('login-error').classList.remove('hidden');
-                }
-            } catch (e) { console.error(e); } finally { btn.disabled = false; btn.innerText = "S'IDENTIFIER"; }
-        }
-
-        window.openCoachMode = function() { 
-            document.getElementById('btn-admin-access')?.classList.remove('hidden'); 
-            showSubView('admin'); setAdminSubView('athletes'); fetchAllUsers(); 
-        };
-
-        window.showSubView = function(id) { 
-            document.querySelectorAll('.sub-view').forEach(v => v.classList.add('hidden')); 
-            const v = document.getElementById(`view-${id}`)?.classList.remove('hidden'); lucide.createIcons(); 
-        };
-
-        window.setAdminSubView = function(view) { 
-            document.querySelectorAll('#admin-content > div').forEach(d => d.classList.add('hidden')); 
-            const d = document.getElementById(`admin-sub-${view}`)?.classList.remove('hidden'); 
-            document.getElementById('nav-btn-athletes')?.classList.toggle('active', view === 'athletes');
-            document.getElementById('nav-btn-templates')?.classList.toggle('active', view === 'templates');
-            document.getElementById('nav-btn-bundles')?.classList.toggle('active', view === 'bundles');
-            lucide.createIcons(); 
-        };
-
-        window.viewAthleteProfile = async function(email, name) { 
-            selectedAthlete = { email, name }; 
-            document.getElementById('profile-athlete-name').innerText = name.toUpperCase(); 
-            setAdminSubView('profile'); 
-            setProfileTab('prog');
-        };
-
-        window.setProfileTab = function(t) { 
-            document.getElementById('profile-prog-view')?.classList.toggle('hidden', t !== 'prog'); 
-            document.getElementById('profile-hist-view')?.classList.toggle('hidden', t !== 'hist'); 
-            if (t === 'prog') fetchAthleteProgram(); 
-        };
-
-        async function fetchAthleteProgram() {
-            const container = document.getElementById('profile-session-container'); 
-            container.innerHTML = `<div class="py-10 animate-pulse text-gray-700 font-black text-center text-[10px]">Chargement...</div>`; 
-            try { 
-                const res = await fetch(`${SCRIPT_URL}?action=getUserProgram&email=${selectedAthlete.email}`); 
-                const prog = await res.json(); 
-                if (prog && prog.length > 0) {
-                    const sessionsMap = {};
-                    prog.forEach(exo => { if (!sessionsMap[exo.programId]) sessionsMap[exo.programId] = { name: exo.programName, exercises: [] }; sessionsMap[exo.programId].exercises.push(exo); });
-                    container.innerHTML = Object.entries(sessionsMap).map(([id, sess]) => `
-                        <div class="bento-card overflow-hidden border-white/10 mb-4 text-white text-left">
-                            <div class="bg-white/5 px-6 py-4 flex justify-between items-center border-b border-white/5">
-                                <h4 class="font-impact italic text-lg uppercase">${sess.name}</h4>
-                                <button onclick="requestDeleteSession('${id}')" class="text-gray-500 hover:text-red-500 p-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                            </div>
-                            <div class="p-4 space-y-2">
-                                ${sess.exercises.map(exo => `<div class="flex items-center gap-3 p-2 rounded-xl text-white"><img src="${getFirstImg(exo.gifUrl)}" class="w-8 h-8 rounded-lg object-cover bg-black border border-white/5"><div class="flex-1"><p class="font-bold text-[11px] uppercase italic">${exo.exo}</p><p class="text-[9px] text-gray-600 font-black uppercase">${exo.setsData.length} séries</p></div></div>`).join('')}
-                            </div>
-                        </div>`).join('');
-                } else container.innerHTML = `<div class="py-20 text-center italic text-xs uppercase font-black">Aucune séance active</div>`; 
-            } catch (e) {} lucide.createIcons();
-        }
-
-        window.requestDeleteSession = function(id) {
-            customConfirm("Supprimer la séance ?", "Action irréversible.", async () => {
-                await post('deleteProgram', { programId: id, userEmail: selectedAthlete.email });
-                fetchAthleteProgram();
-            });
-        };
-
-        window.openTemplatePicker = function() { 
-            const picker = document.getElementById('template-picker');
-            if (picker) {
-                picker.classList.remove('hidden'); 
-                const list = document.getElementById('template-picker-list'); 
-                if (list) list.innerHTML = ALL_TEMPLATES.map(t => `<button onclick="applyTemplateToAthlete('${t.id}')" class="w-full bento-card p-5 text-left mb-3"><p class="font-impact italic text-lg uppercase text-white">${t.name}</p></button>`).join(''); 
-            }
-        };
-
-        window.applyTemplateToAthlete = function(id) {
-            const t = ALL_TEMPLATES.find(x => x.id === id);
-            if(!t) return;
-            plannedExercises = JSON.parse(JSON.stringify(t.exercises));
-            document.getElementById('admin-program-name').value = t.name;
-            document.getElementById('selected-athlete-name').innerText = selectedAthlete ? selectedAthlete.name.toUpperCase() : "NOUVELLE SÉANCE TYPE";
-            document.getElementById('template-picker').classList.add('hidden');
-            setAdminSubView('creator');
-            renderPlanned();
-        };
-
-        window.openBundlePicker = function() { 
-            const picker = document.getElementById('bundle-picker');
-            if (picker) {
-                picker.classList.remove('hidden'); 
-                const list = document.getElementById('bundle-picker-list'); 
-                if (list) list.innerHTML = ALL_BUNDLES.map(b => `<button onclick="assignBundleToAthlete('${b.id}')" class="w-full bento-card p-5 text-left mb-3"><p class="font-impact italic text-lg uppercase text-white">${b.name}</p></button>`).join(''); 
-            }
-        };
-
-        window.assignBundleToAthlete = async function(id) {
-            document.getElementById('bundle-picker')?.classList.add('hidden');
-            customConfirm("Déployer le Pack ?", "Ceci ajoutera toutes les séances du pack.", async () => {
-                await post('assignBundle', { bundleId: id, userEmail: selectedAthlete.email, coachEmail: currentUser.email });
-                fetchAthleteProgram();
-            });
-        };
-
-        async function fetchBundles() {
-            try {
-                const res = await fetch(`${SCRIPT_URL}?action=getBundles`);
-                ALL_BUNDLES = await res.json();
-                renderBundles();
-            } catch (e) {}
-        }
-
-        function renderBundles() {
-            const list = document.getElementById('bundles-list'); if (!list) return;
-            list.innerHTML = ALL_BUNDLES.map(b => `
-                <div class="bento-card p-5 flex justify-between items-center text-white mb-3 cursor-pointer group hover:border-[#0BB005]/50" onclick="editBundle('${b.id}')">
-                    <div><p class="font-impact italic text-lg uppercase">${b.name}</p><p class="text-[9px] text-gray-600 font-black uppercase mt-1 opacity-50">${b.templates ? b.templates.length : 0} séances</p></div>
-                    <button onclick="event.stopPropagation(); confirmDeleteBundle('${b.id}', '${b.name.replace(/'/g, "\\'")}')" class="w-10 h-10 bg-red-500/10 text-red-500 rounded-xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"><i data-lucide="trash-2"></i></button>
-                </div>`).join('');
-            lucide.createIcons();
-        }
-
-        window.editBundle = function(id) {
-            const b = ALL_BUNDLES.find(x => x.id === id);
-            if(!b) return;
-            bundleDraftTemplates = [...b.templates];
-            document.getElementById('bundle-creator-name').value = b.name;
-            renderBundleDraft();
-            setAdminSubView('bundle-creator');
-        };
-
-        window.confirmDeleteBundle = function(id, name) {
-            customConfirm("Supprimer le Pack ?", `Voulez-vous supprimer "${name}" ?`, async () => {
-                await post('deleteBundle', { bundleId: id }); fetchBundles();
-            });
-        };
-
-        window.openBundleCreator = function() { bundleDraftTemplates = []; document.getElementById('bundle-creator-name').value = ""; renderBundleDraft(); setAdminSubView('bundle-creator'); };
-        window.openBundleTemplatePicker = function() { 
-            document.getElementById('template-picker').classList.remove('hidden');
-            document.getElementById('template-picker-list').innerHTML = ALL_TEMPLATES.map(t => `<button onclick="addTemplateToBundle('${t.id}', '${t.name.replace(/'/g, "\\'")}')" class="w-full bento-card p-4 text-left mb-2"><p class="font-impact italic uppercase text-white">${t.name}</p></button>`).join('');
-        };
-        window.addTemplateToBundle = function(id, name) { bundleDraftTemplates.push({ id, name }); document.getElementById('template-picker').classList.add('hidden'); renderBundleDraft(); };
-        function renderBundleDraft() { const list = document.getElementById('bundle-selected-templates'); if(!list) return; list.innerHTML = bundleDraftTemplates.map((t, i) => `<div class="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5 mb-1"><span class="font-impact italic uppercase text-sm">${t.name}</span><button onclick="bundleDraftTemplates.splice(${i}, 1); renderBundleDraft();" class="text-red-500"><i data-lucide="minus-circle"></i></button></div>`).join(''); lucide.createIcons(); }
-        window.saveBundle = async function() { 
-            const name = document.getElementById('bundle-creator-name').value.trim();
-            if(!name || bundleDraftTemplates.length === 0) return;
-            await post('saveBundle', { bundleName: name, templateIds: bundleDraftTemplates }); 
-            setAdminSubView('bundles'); fetchBundles();
-        };
-
-        window.openTemplatesView = function() { setAdminSubView('templates'); fetchTemplates(); };
-        async function fetchTemplates() { const res = await fetch(`${SCRIPT_URL}?action=getTemplates`); ALL_TEMPLATES = await res.json(); renderTemplates(); }
-        
-        function renderTemplates() {
-            const list = document.getElementById('templates-list'); if(!list) return;
-            list.innerHTML = ALL_TEMPLATES.map(t => `
-                <div class="bento-card p-5 flex justify-between items-center mb-3 cursor-pointer group hover:border-[#0BB005]/50 text-white" onclick="editTemplate('${t.id}')">
-                    <div><p class="font-impact italic text-lg uppercase">${t.name}</p><p class="text-[9px] text-gray-600 font-black uppercase mt-1 opacity-50">${t.exercises.length} exercices</p></div>
-                    <button onclick="event.stopPropagation(); confirmDeleteTemplate('${t.id}')" class="w-10 h-10 bg-red-500/10 text-red-500 rounded-xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"><i data-lucide="trash-2"></i></button>
-                </div>`).join('');
-            lucide.createIcons();
-        }
-
-        window.editTemplate = function(id) {
-            const t = ALL_TEMPLATES.find(x => x.id === id);
-            if(!t) return;
-            selectedAthlete = null;
-            plannedExercises = JSON.parse(JSON.stringify(t.exercises));
-            document.getElementById('admin-program-name').value = t.name;
-            document.getElementById('selected-athlete-name').innerText = "ÉDITION SÉANCE TYPE";
-            setAdminSubView('creator');
-            renderPlanned();
-        };
-
-        window.confirmDeleteTemplate = function(id) { customConfirm("Supprimer Template ?", "Action irréversible.", async () => { await post('deleteTemplate', { templateId: id }); fetchTemplates(); }); };
-
-        window.openCreatorWithBlank = function() { selectedAthlete = null; plannedExercises = []; document.getElementById('admin-program-name').value = ""; document.getElementById('selected-athlete-name').innerText = "NOUVELLE SÉANCE TYPE"; setAdminSubView('creator'); renderPlanned(); };
-        window.openExercisePicker = function() { document.getElementById('exo-picker').classList.remove('hidden'); renderPickerList(); };
-        window.closePicker = function() { document.getElementById('exo-picker').classList.add('hidden'); };
-        window.setPickerTab = function(t) { activeTab = t; renderPickerList(); };
-        window.filterPicker = function() { renderPickerList(); };
-        
-        async function renderPickerList() {
-            const list = document.getElementById('picker-list'); const search = document.getElementById('picker-search').value.toLowerCase();
-            const src = activeTab === 'local' ? EXERCISE_LIB : (GLOBAL_DB.length ? GLOBAL_DB : (await initGlobalDB() || []));
-            list.innerHTML = src.filter(e => (e.name || e.exo || "").toLowerCase().includes(search)).slice(0, 30).map(e => `
-                <div class="bento-card p-4 flex justify-between items-center group mb-3">
-                    <div class="flex items-center gap-4 cursor-pointer" onclick='showExoDetail(${JSON.stringify(e).replace(/'/g, "&apos;")})'><img src="${getFirstImg(e.gifUrl)}" class="w-12 h-12 rounded-xl object-cover"><div><p class="font-impact italic text-lg uppercase leading-tight">${e.name || e.exo}</p></div></div>
-                    <button onclick='importAndAddExercise(${JSON.stringify(e).replace(/'/g, "&apos;")})' class="w-10 h-10 bg-[#0BB005]/10 text-[#0BB005] rounded-xl flex items-center justify-center"><i data-lucide="plus"></i></button>
-                </div>`).join('');
-            lucide.createIcons();
-        }
-
-        window.importAndAddExercise = async function(e) {
-            plannedExercises.push({ name: e.name||e.exo, gifUrl: e.gifUrl, instructions: e.instructions, loadType: 'kg', setsData: [{type:'S', reps:'10', weight:60, rpe:''}] });
-            closePicker(); renderPlanned();
-            if(activeTab === 'global') post('importExercise', e).then(() => fetchLocalLibrary());
-        };
-
-        window.renderPlanned = function() { 
-            const list = document.getElementById('admin-exercise-list'); 
-            if (!list) return; 
-            list.innerHTML = plannedExercises.map((e, i) => `
-                <div class="bento-card p-5 space-y-4 border-white/10 text-white text-left">
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-center gap-3">
-                            <img src="${getFirstImg(e.gifUrl)}" class="w-10 h-10 rounded-lg object-cover bg-black border border-white/5">
-                            <div><span class="text-[#0BB005] font-impact italic text-lg uppercase block">${e.name}</span><span class="text-[8px] font-black text-gray-600 uppercase">${e.loadType || 'kg'}</span></div>
-                        </div>
-                        <div class="flex flex-col items-end gap-2">
-                            <select onchange="plannedExercises[${i}].loadType = this.value; renderPlanned();" class="unit-select">${LOAD_UNITS.map(u => `<option value="${u.id}" ${e.loadType === u.id ? 'selected' : ''}>${u.label}</option>`).join('')}</select>
-                            <button onclick="plannedExercises.splice(${i}, 1); renderPlanned();" class="text-gray-700 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </div>
-                    </div>
-                    <div class="space-y-2">
-                        <div class="grid-layout grid-coach log-header px-1 text-white"><div>Type</div><div class="text-center">Charge</div><div class="text-center">Reps</div><div class="text-center">RPE</div><div></div></div>
-                        ${e.setsData.map((s, si) => `
-                        <div class="grid-layout grid-coach bg-white/5 p-2 rounded-xl text-white">
-                            <div onclick="cycleSetType(${i}, ${si})" class="set-badge ${SET_TYPES[s.type]?.class || 'badge-w'}">${s.type}</div>
-                            <input type="number" value="${s.weight}" onchange="updateSetData(${i}, ${si}, 'weight', this.value)" class="input-log">
-                            <input type="text" value="${s.reps}" onchange="updateSetData(${i}, ${si}, 'reps', this.value)" class="input-log text-xs">
-                            <input type="number" value="${s.rpe}" onchange="updateSetData(${i}, ${si}, 'rpe', this.value)" class="input-log border-[#0BB005]/10 text-[#0BB005]">
-                            <button onclick="plannedExercises[${i}].setsData.splice(${si}, 1); renderPlanned();" class="text-gray-700 flex justify-center"><i data-lucide="minus-circle" class="w-4 h-4"></i></button>
-                        </div>`).join('')}
-                        <button onclick="addSet(${i})" class="w-full py-2 border border-dashed border-white/10 rounded-xl text-[9px] font-black uppercase text-gray-500 hover:text-[#0BB005]">+ Série</button>
-                    </div>
-                </div>`
-            ).join(''); 
-            lucide.createIcons(); 
-        };
-
-        window.updateSetData = function(exoIdx, setIdx, field, val) { plannedExercises[exoIdx].setsData[setIdx][field] = val; renderPlanned(); };
-        window.cycleSetType = function(exoIdx, setIdx) { const ts = Object.keys(SET_TYPES); const cur = plannedExercises[exoIdx].setsData[setIdx].type; plannedExercises[exoIdx].setsData[setIdx].type = ts[(ts.indexOf(cur) + 1) % ts.length]; renderPlanned(); };
-        window.addSet = function(exoIdx) { const last = plannedExercises[exoIdx].setsData[plannedExercises[exoIdx].setsData.length - 1]; plannedExercises[exoIdx].setsData.push({ ...last }); renderPlanned(); };
-        window.saveNewProgram = async function() { if (!selectedAthlete) return; const name = document.getElementById('admin-program-name').value.trim(); if (!name || plannedExercises.length === 0) return; await post('saveProgram', { coachEmail: currentUser.email, userEmail: selectedAthlete.email, programName: name, exercises: plannedExercises }); viewAthleteProfile(selectedAthlete.email, selectedAthlete.name); };
-        
-        window.saveAsTemplate = async function() {
-            const name = document.getElementById('admin-program-name').value.trim();
-            if (!name || plannedExercises.length === 0) return;
-            await post('saveTemplate', { templateName: name, exercises: plannedExercises });
-            openTemplatesView();
-        };
-
-        window.showExoDetail = function(e) {
-            const mod = document.getElementById('exo-detail-modal');
-            const cnt = document.getElementById('exo-detail-content');
-            const imgs = getAllImgs(e.gifUrl || e.illustrationUrl);
-            cnt.innerHTML = `
-                <div class="text-center space-y-4">
-                    <h2 class="text-3xl italic font-impact uppercase leading-none text-white">${e.name || e.exo}</h2>
-                    <p class="text-[#0BB005] font-black uppercase text-xs tracking-widest">${e.muscle || '---'}</p>
-                </div>
-                <div class="slider-container rounded-3xl overflow-hidden shadow-2xl border border-white/10 mb-6">
-                    ${imgs.map(img => `<img src="${img}" class="w-full aspect-video object-cover">`).join('')}
-                </div>
-                <div class="bento-card p-6 space-y-4 border-white/10 text-left">
-                    <h3 class="text-xs font-black uppercase tracking-[0.2em] text-gray-500">Instructions</h3>
-                    <div class="text-sm text-gray-300 leading-relaxed space-y-3 italic">${(e.instructions || "Indisponible.").split('\n').map(l => `<p>${l}</p>`).join('')}</div>
-                </div>`;
-            mod.classList.remove('hidden');
-            lucide.createIcons();
-        };
-        window.closeExoDetail = function() { document.getElementById('exo-detail-modal').classList.add('hidden'); };
-
-        window.openExerciseLibrary = function() { activeTab = 'local'; openExercisePicker(); };
-
-        async function fetchProgram() { const res = await fetch(`${SCRIPT_URL}?action=getUserProgram&email=${currentUser.email}`); userProgram = await res.json(); renderAthleteDashboard(); }
-        function renderAthleteDashboard() {
-            const container = document.getElementById('athlete-sessions-list'); if (!container) return;
-            const packsMap = new Map();
-            userProgram.forEach(exo => {
-                const bId = exo.bundleId || "solo";
-                if (!packsMap.has(bId)) packsMap.set(bId, { name: exo.bundleName || "Séances Solo", sessions: new Map() });
-                const pack = packsMap.get(bId);
-                if (!pack.sessions.has(exo.programId)) pack.sessions.set(exo.programId, { name: exo.programName, exos: [] });
-                pack.sessions.get(exo.programId).exos.push(exo);
-            });
-            container.innerHTML = Array.from(packsMap.values()).map(pack => `
-                <div class="space-y-4">
-                    <div class="pack-header"><p class="text-[9px] font-black uppercase tracking-[0.3em] text-[#0BB005] opacity-80">${pack.name === "Séances Solo" ? "Individuel" : "Programme"}</p><h3 class="text-xl font-impact italic text-white uppercase">${pack.name}</h3></div>
-                    <div class="space-y-3">${Array.from(pack.sessions.entries()).map(([id, s]) => `
-                        <button onclick="startSession('${id}')" class="w-full bento-card p-6 flex items-center justify-between group text-white">
-                            <div class="flex items-center gap-4"><div class="w-12 h-12 rounded-2xl bg-[#0BB005]/10 flex items-center justify-center text-[#0BB005] group-hover:bg-[#0BB005] group-hover:text-black"><i data-lucide="play" class="w-5 h-5 fill-current"></i></div><div class="text-left"><h3 class="font-impact italic text-xl uppercase">${s.name}</h3><p class="text-[9px] text-gray-600 font-black uppercase">${s.exos.length} exercices</p></div></div>
-                            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-800"></i>
-                        </button>`).join('')}</div>
-                </div>`).join('');
-            lucide.createIcons(); updateDashboardStats();
-        }
-
-        window.startSession = function(id) { 
-            const f = userProgram.filter(x => x.programId === id); 
-            if (f.length > 0) { userProgram = JSON.parse(JSON.stringify(f)); startWorkout(); } 
-        };
-
-        window.startWorkout = async function() { 
-            currentSessionId = 'SESSION-' + Date.now(); workoutSeconds = 0; clearInterval(globalTimerInterval); 
-            globalTimerInterval = setInterval(() => { 
-                workoutSeconds++; const m = Math.floor(workoutSeconds/60).toString().padStart(2,'0'); const s = (workoutSeconds%60).toString().padStart(2,'0'); 
-                const el = document.getElementById('global-timer'); if(el) el.innerText = `${m}:${s}`; 
-            }, 1000); 
-            userProgram.forEach(exo => {
-                exo.doneStatus = Array(exo.setsData.length).fill(false);
-                exo.actuals = exo.setsData.map(s => ({ weight: s.weight, reps: '', rpe: s.rpe || '', type: s.type }));
-            });
-            const sessNameEl = document.getElementById('training-session-name'); if(sessNameEl) sessNameEl.innerText = userProgram[0].programName;
-            renderFullWorkout(); showSubView('training'); window.scrollTo(0,0);
-        };
-
-        window.renderFullWorkout = async function() {
-            const container = document.getElementById('workout-list-container'); if(!container) return;
-            container.innerHTML = userProgram.map((exo, exoIdx) => {
-                const currentUnit = LOAD_UNITS.find(u => u.id === (exo.loadType || 'kg')) || LOAD_UNITS[0];
+            <div class="bento-card p-4 space-y-2 border-white/5">
+              ${exo.setsData.map((s, i) => {
+                const st = SET_TYPES[s.type] || SET_TYPES['W'];
                 return `
-                <div class="space-y-4 text-left text-white">
-                    <div class="flex items-center gap-4">
-                        <img src="${getFirstImg(exo.gifUrl)}" class="w-14 h-14 rounded-2xl object-cover bg-black border border-white/5" onclick='showExoDetail(${JSON.stringify(exo).replace(/'/g, "&apos;")})'>
-                        <h3 class="text-xl italic font-impact uppercase leading-none">${exo.exo}</h3>
-                    </div>
-                    <div class="bento-card p-4 space-y-2 border-white/5">
-                        <div class="grid-layout grid-athlete log-header px-1 opacity-40 text-white"><div>TYPE</div><div>CIBLE</div><div class="text-center">${currentUnit.label}</div><div class="text-center">REPS</div><div class="text-center">RPE</div><div></div></div>
-                        ${exo.setsData.map((s, i) => {
-                            const st = SET_TYPES[s.type] || SET_TYPES['W'];
-                            return `
-                            <div class="grid-layout grid-athlete p-2 rounded-xl transition-all ${exo.doneStatus[i] ? 'bg-[#0BB005]/10 border-[#0BB005]/30' : ''} text-white">
-                                <div class="set-badge ${st.class}">${st.label}</div>
-                                <div class="text-[10px] font-bold text-gray-500 italic uppercase">${s.weight}${currentUnit.label.toLowerCase()} x ${s.reps}</div>
-                                <input type="number" value="${exo.actuals[i].weight || s.weight}" onchange="userProgram[${exoIdx}].actuals[${i}].weight = this.value" class="input-log text-white">
-                                <input type="number" value="${exo.actuals[i].reps}" placeholder="${s.reps}" onchange="userProgram[${exoIdx}].actuals[${i}].reps = this.value" class="input-log text-xs text-white">
-                                <input type="number" value="${exo.actuals[i].rpe}" onchange="userProgram[${exoIdx}].actuals[${i}].rpe = this.value" class="input-log border-[#0BB005]/20 text-[#0BB005] text-white">
-                                <div class="flex justify-end relative text-white">
-                                    <button onclick="toggleSet(${exoIdx}, ${i})" class="w-8 h-8 rounded-lg flex items-center justify-center transition-all ${exo.doneStatus[i] ? 'bg-[#0BB005]/20 text-white' : 'bg-white/5 text-gray-700'}">
-                                        <i data-lucide="check" class="w-4 h-4 ${exo.doneStatus[i] ? '' : 'opacity-30'}"></i>
-                                    </button>
-                                </div>
-                            </div>`;
-                        }).join('')}
-                    </div>
-                </div>`;
-            }).join('');
-            lucide.createIcons();
-        };
+                  <div class="grid-layout grid-athlete p-2 rounded-xl ${exo.doneStatus[i] ? 'bg-[#0BB005]/10 border-[#0BB005]/30' : ''}">
+                    <div class="set-badge ${st.class}">${st.label}</div>
+                    <div class="text-[10px] font-bold text-gray-500 italic uppercase">${s.weight}${currentUnit.label.toLowerCase()} x ${s.reps}</div>
+                    <input type="number" value="${exo.actuals[i].weight ?? s.weight}" onchange="state.activeWorkout[${exoIdx}].actuals[${i}].weight = this.value" class="input-log">
+                    <input type="number" value="${exo.actuals[i].reps}" placeholder="${s.reps}" onchange="state.activeWorkout[${exoIdx}].actuals[${i}].reps = this.value" class="input-log text-xs">
+                    <input type="number" value="${exo.actuals[i].rpe}" onchange="state.activeWorkout[${exoIdx}].actuals[${i}].rpe = this.value" class="input-log border-[#0BB005]/20 text-[#0BB005]">
+                    <button onclick="toggleSet(${exoIdx}, ${i})" class="w-8 h-8 rounded-lg flex items-center justify-center ${exo.doneStatus[i] ? 'bg-[#0BB005]/20 text-white' : 'bg-white/5 text-gray-700'}">
+                      <i data-lucide="check" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
 
-        window.toggleSet = async function(exoIdx, setIdx) {
-            const exo = userProgram[exoIdx];
-            if (exo.doneStatus[setIdx]) return; 
-            exo.doneStatus[setIdx] = true;
-            renderFullWorkout();
-            try {
-                await post('logExercise', { 
-                    email: currentUser.email, exercise: exo.exo, set: setIdx + 1, setType: exo.actuals[setIdx].type, 
-                    weight: exo.actuals[setIdx].weight || exo.setsData[setIdx].weight, 
-                    reps: exo.actuals[setIdx].reps || exo.setsData[setIdx].reps, rpe: exo.actuals[setIdx].rpe, 
-                    sessionTime: document.getElementById('global-timer').innerText, sessionId: currentSessionId 
-                });
-            } catch (e) {}
-        };
+      lucide.createIcons();
+    }
 
-        window.showHelp = function() { customConfirm("Aide Rapide", "Clique sur les séances pour commencer. Utilise le timer de repos entre les séries.", ()=>{}); };
-        window.adjustRest = function(v) { restSecondsRemaining = Math.max(0, restSecondsRemaining + v); document.getElementById('rest-timer-display').innerText = `${restSecondsRemaining}s`; };
-        window.skipRest = function() { clearInterval(restTimerInterval); document.getElementById('rest-timer-container')?.classList.add('hidden'); };
-        window.logout = function() { location.reload(); };
-        window.requestFinishWorkout = function() { customConfirm("Finir ?", "Séance terminée ?", () => { document.getElementById('workout-summary-modal').classList.remove('hidden'); fetchProgram(); }); };
-        window.closeWorkoutSummary = function() { document.getElementById('workout-summary-modal').classList.add('hidden'); showSubView('dashboard'); };
-        
-        async function fetchAllUsers() { const res = await fetch(`${SCRIPT_URL}?action=getAllUsers`); ALL_USERS = await res.json(); renderAthletes(); }
-        function renderAthletes() { const list = document.getElementById('athletes-list'); list.innerHTML = ALL_USERS.map(u => `<div class="bento-card p-5 flex justify-between items-center group mb-3 text-white"><div class="flex items-center gap-4 text-white"><div class="w-12 h-12 rounded-2xl bg-[#0BB005]/10 flex items-center justify-center text-[#0BB005] font-black text-xl">${u.name.charAt(0).toUpperCase()}</div><div><p class="font-impact italic text-lg uppercase">${u.name}</p><p class="text-[9px] text-gray-600 font-black uppercase opacity-50">${u.email}</p></div></div><button onclick="viewAthleteProfile('${u.email}', '${u.name.replace(/'/g, "\\'")}')" class="w-10 h-10 bg-white/5 text-gray-500 rounded-xl flex items-center justify-center text-white"><i data-lucide="eye"></i></button></div>`).join(''); lucide.createIcons(); }
-        async function fetchLocalLibrary() { const res = await fetch(`${SCRIPT_URL}?action=getExercises`); EXERCISE_LIB = await res.json(); }
-        async function initGlobalDB() { try { const r = await fetch(`${SCRIPT_URL}?action=getGlobalLibrary`); const d = await r.json(); GLOBAL_DB = d; return d; } catch(e) {return [];} }
-        async function updateDashboardStats() {
-            try {
-                const res = await fetch(`${SCRIPT_URL}?action=getUserLogs&email=${currentUser.email}`);
-                const logs = await res.json();
-                if (logs && logs.length > 0) {
-                    const totalVolume = logs.reduce((sum, l) => sum + (parseFloat(l.weight) * parseInt(l.reps) || 0), 0);
-                    const volEl = document.getElementById('dash-volume'); if(volEl) volEl.innerText = `${Math.round(totalVolume)} KG`;
-                    const last7Days = new Date(); last7Days.setDate(last7Days.getDate() - 7);
-                    const uniqueSessions = new Set(logs.filter(l => new Date(l.date) > last7Days).map(l => l.sessionId || new Date(l.date).toDateString()));
-                    const freqEl = document.getElementById('dash-freq'); if(freqEl) freqEl.innerText = `${uniqueSessions.size} S/S`;
-                }
-            } catch(e) {}
+    async function toggleSet(exoIdx, setIdx) {
+      const exo = state.activeWorkout[exoIdx];
+      if (exo.doneStatus[setIdx]) return;
+
+      exo.doneStatus[setIdx] = true;
+      renderFullWorkout();
+
+      try {
+        await post('logExercise', {
+          email: state.user.email,
+          exercise: exo.exo,
+          set: setIdx + 1,
+          setType: exo.actuals[setIdx].type,
+          weight: exo.actuals[setIdx].weight || exo.setsData[setIdx].weight,
+          reps: exo.actuals[setIdx].reps || exo.setsData[setIdx].reps,
+          rpe: exo.actuals[setIdx].rpe,
+          sessionTime: document.getElementById('global-timer').innerText,
+          sessionId: state.currentSessionId
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function requestFinishWorkout() {
+      customConfirm("Finir ?", "Séance terminée ?", async () => {
+        clearInterval(state.globalTimerInterval);
+        showSubView('dashboard');
+        await refreshBootstrap();
+      });
+    }
+
+    // --- ADMIN: ATHLETES ---
+    function renderAthletes() {
+      const list = document.getElementById('athletes-list');
+      if (!list) return;
+
+      list.innerHTML = (state.allUsers || []).map(u => `
+        <div class="bento-card p-5 flex justify-between items-center mb-3">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-[#0BB005]/10 flex items-center justify-center text-[#0BB005] font-black text-xl">${String(u.name || '?').charAt(0).toUpperCase()}</div>
+            <div>
+              <p class="font-impact italic text-lg uppercase">${u.name || '---'}</p>
+              <p class="text-[9px] text-gray-600 font-black uppercase opacity-50">${u.email || ''}</p>
+            </div>
+          </div>
+          <button onclick="viewAthleteProfile('${u.email}', '${String(u.name || '').replace(/'/g, "\\'")}')" class="w-10 h-10 bg-white/5 text-gray-500 rounded-xl flex items-center justify-center">
+            <i data-lucide="eye"></i>
+          </button>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    async function viewAthleteProfile(email, name) {
+      state.selectedAthlete = { email, name };
+      document.getElementById('profile-athlete-name').innerText = name.toUpperCase();
+      setAdminSubView('profile');
+      setProfileTab('prog');
+    }
+
+    function setProfileTab(t) {
+      document.getElementById('profile-prog-view').classList.toggle('hidden', t !== 'prog');
+      document.getElementById('profile-hist-view').classList.toggle('hidden', t !== 'hist');
+      if (t === 'prog') fetchAthleteProgram();
+    }
+
+    async function fetchAthleteProgram() {
+      const container = document.getElementById('profile-session-container');
+      container.innerHTML = `<div class="py-10 text-center text-[10px] animate-pulse">Chargement...</div>`;
+
+      const res = await fetch(`${SCRIPT_URL}?action=getUserProgram&email=${encodeURIComponent(state.selectedAthlete.email)}`);
+      const prog = await res.json();
+
+      if (prog && prog.length > 0) {
+        const map = {};
+        prog.forEach(e => { if (!map[e.programId]) map[e.programId] = { name: e.programName, exercises: [] }; map[e.programId].exercises.push(e); });
+
+        container.innerHTML = Object.entries(map).map(([id, s]) => `
+          <div class="bento-card overflow-hidden mb-4">
+            <div class="bg-white/5 px-6 py-4 flex justify-between items-center">
+              <h4 class="font-impact italic text-lg uppercase">${s.name}</h4>
+              <button onclick="requestDeleteSession('${id}')" class="text-gray-500 hover:text-red-500 p-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            </div>
+            <div class="p-4 space-y-2">
+              ${s.exercises.map(e => `
+                <div class="flex items-center gap-3 p-2 rounded-xl">
+                  <img src="${getFirstImg(e.gifUrl)}" class="w-8 h-8 rounded-lg object-cover bg-black">
+                  <div class="flex-1">
+                    <p class="font-bold text-[11px] uppercase italic">${e.exo}</p>
+                    <p class="text-[9px] text-gray-600 font-black uppercase">${e.setsData.length} séries</p>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('');
+      } else {
+        container.innerHTML = `<div class="py-20 text-center italic text-xs font-black uppercase">Aucune séance active</div>`;
+      }
+
+      lucide.createIcons();
+    }
+
+    function requestDeleteSession(id) {
+      customConfirm("Supprimer ?", "Séance définitivement retirée.", async () => {
+        await post('deleteProgram', { programId: id });
+        fetchAthleteProgram();
+      });
+    }
+
+    // --- ADMIN: TEMPLATES ---
+    function renderTemplates() {
+      const list = document.getElementById('templates-list');
+      if (!list) return;
+
+      list.innerHTML = (state.templates || []).map(t => `
+        <div class="bento-card p-5 flex justify-between items-center mb-3 cursor-pointer hover:border-[#0BB005]/50" onclick="editTemplate('${t.id}')">
+          <div>
+            <p class="font-impact italic text-lg uppercase">${t.name}</p>
+            <p class="text-[9px] text-gray-600 font-black uppercase mt-1 opacity-50">${t.exercises.length} exercices</p>
+          </div>
+          <button onclick="event.stopPropagation(); confirmDeleteTemplate('${t.id}')" class="w-10 h-10 bg-red-500/10 text-red-500 rounded-xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"><i data-lucide="trash-2"></i></button>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function editTemplate(id) {
+      const t = state.templates.find(x => x.id === id);
+      if (!t) return;
+
+      state.editingTemplateId = id;
+      state.selectedAthlete = null;
+      state.plannedExercises = JSON.parse(JSON.stringify(t.exercises));
+
+      document.getElementById('admin-program-name').value = t.name;
+      document.getElementById('selected-athlete-name-display').innerText = "ÉDITION SÉANCE TYPE";
+      document.getElementById('creator-title').innerText = "Template";
+
+      setAdminSubView('creator');
+      renderPlanned();
+    }
+
+    function confirmDeleteTemplate(id) {
+      customConfirm("Supprimer Template ?", "Action irréversible.", async () => {
+        await post('deleteTemplate', { templateId: id });
+        await refreshBootstrap();
+        setAdminSubView('templates');
+      });
+    }
+
+    // --- ADMIN: BUNDLES ---
+    function renderBundles() {
+      const list = document.getElementById('bundles-list');
+      if (!list) return;
+
+      list.innerHTML = (state.bundles || []).map(b => `
+        <div class="bento-card p-5 flex justify-between items-center mb-3 cursor-pointer hover:border-[#0BB005]/50" onclick="editBundle('${b.id}')">
+          <div>
+            <p class="font-impact italic text-lg uppercase">${b.name}</p>
+            <p class="text-[9px] text-gray-600 font-black uppercase mt-1 opacity-50">${(b.templates || []).length} séances</p>
+          </div>
+          <button onclick="event.stopPropagation(); confirmDeleteBundle('${b.id}', '${String(b.name).replace(/'/g, "\\'")}')" class="w-10 h-10 bg-red-500/10 text-red-500 rounded-xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"><i data-lucide="trash-2"></i></button>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function editBundle(id) {
+      const b = state.bundles.find(x => x.id === id);
+      if (!b) return;
+
+      state.editingBundleId = id;
+      state.bundleDraftTemplates = [...(b.templates || [])];
+
+      document.getElementById('bundle-creator-name').value = b.name;
+      renderBundleDraft();
+      setAdminSubView('bundle-creator');
+    }
+
+    function confirmDeleteBundle(id, name) {
+      customConfirm("Supprimer le Pack ?", `Supprimer "${name}" ?`, async () => {
+        await post('deleteBundle', { bundleId: id });
+        await refreshBootstrap();
+        setAdminSubView('bundles');
+      });
+    }
+
+    function openBundleCreator() {
+      state.editingBundleId = null;
+      state.bundleDraftTemplates = [];
+      document.getElementById('bundle-creator-name').value = "";
+      renderBundleDraft();
+      setAdminSubView('bundle-creator');
+    }
+
+    // --- CREATOR ---
+    function openCreatorWithBlank() {
+      state.editingTemplateId = null;
+      state.selectedAthlete = null;
+      state.plannedExercises = [];
+
+      document.getElementById('admin-program-name').value = "";
+      document.getElementById('selected-athlete-name-display').innerText = "NOUVELLE SÉANCE TYPE";
+      document.getElementById('creator-title').innerText = "Créateur";
+
+      setAdminSubView('creator');
+      renderPlanned();
+    }
+
+    function renderPlanned() {
+      const list = document.getElementById('admin-exercise-list');
+      if (!list) return;
+
+      list.innerHTML = state.plannedExercises.map((e, i) => `
+        <div class="bento-card p-5 space-y-4 text-left">
+          <div class="flex justify-between items-start">
+            <div class="flex items-center gap-3">
+              <img src="${getFirstImg(e.gifUrl)}" class="w-10 h-10 rounded-lg object-cover bg-black border border-white/5">
+              <div>
+                <span class="text-[#0BB005] font-impact italic text-lg uppercase block">${e.name}</span>
+                <span class="text-[8px] font-black text-gray-600 uppercase">${e.loadType || 'kg'}</span>
+              </div>
+            </div>
+            <div class="flex flex-col items-end gap-2">
+              <select onchange="state.plannedExercises[${i}].loadType = this.value; renderPlanned();" class="unit-select">
+                ${LOAD_UNITS.map(u => `<option value="${u.id}" ${e.loadType === u.id ? 'selected' : ''}>${u.label}</option>`).join('')}
+              </select>
+              <button onclick="state.plannedExercises.splice(${i}, 1); renderPlanned();" class="text-gray-700 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            ${e.setsData.map((s, si) => `
+              <div class="grid-layout grid-coach bg-white/5 p-2 rounded-xl">
+                <div onclick="cycleSetType(${i}, ${si})" class="set-badge ${SET_TYPES[s.type]?.class || 'badge-w'}">${s.type}</div>
+                <input type="number" value="${s.weight}" onchange="state.plannedExercises[${i}].setsData[${si}].weight = this.value; renderPlanned();" class="input-log">
+                <input type="text" value="${s.reps}" onchange="state.plannedExercises[${i}].setsData[${si}].reps = this.value; renderPlanned();" class="input-log text-xs">
+                <input type="number" value="${s.rpe}" onchange="state.plannedExercises[${i}].setsData[${si}].rpe = this.value; renderPlanned();" class="input-log border-[#0BB005]/10 text-[#0BB005]">
+                <button onclick="state.plannedExercises[${i}].setsData.splice(${si}, 1); renderPlanned();" class="text-gray-700 flex justify-center"><i data-lucide="minus-circle" class="w-4 h-4"></i></button>
+              </div>
+            `).join('')}
+
+            <button onclick="addSet(${i})" class="w-full py-2 border border-dashed border-white/10 rounded-xl text-[9px] font-black uppercase text-gray-500 hover:text-[#0BB005]">+ Série</button>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function cycleSetType(exoIdx, setIdx) {
+      const types = Object.keys(SET_TYPES);
+      const current = state.plannedExercises[exoIdx].setsData[setIdx].type;
+      state.plannedExercises[exoIdx].setsData[setIdx].type = types[(types.indexOf(current) + 1) % types.length];
+      renderPlanned();
+    }
+
+    function addSet(exoIdx) {
+      const last = state.plannedExercises[exoIdx].setsData[state.plannedExercises[exoIdx].setsData.length - 1];
+      state.plannedExercises[exoIdx].setsData.push(last ? { ...last } : { type:'S', weight:60, reps:'10', rpe:'' });
+      renderPlanned();
+    }
+
+    async function saveNewProgram() {
+      if (!state.selectedAthlete) return;
+
+      const name = document.getElementById('admin-program-name').value.trim();
+      if (!name || state.plannedExercises.length === 0) return;
+
+      await post('saveProgram', {
+        coachEmail: state.user.email,
+        userEmail: state.selectedAthlete.email,
+        programName: name,
+        exercises: state.plannedExercises
+      });
+
+      viewAthleteProfile(state.selectedAthlete.email, state.selectedAthlete.name);
+    }
+
+    async function saveAsTemplate() {
+      const name = document.getElementById('admin-program-name').value.trim();
+      if (!name || state.plannedExercises.length === 0) return;
+
+      await post('saveTemplate', {
+        templateId: state.editingTemplateId,
+        templateName: name,
+        exercises: state.plannedExercises
+      });
+
+      state.editingTemplateId = null;
+      await refreshBootstrap();
+      setAdminSubView('templates');
+    }
+
+    // --- BUNDLE CREATOR ---
+    function renderBundleDraft() {
+      const list = document.getElementById('bundle-selected-templates');
+      if (!list) return;
+
+      list.innerHTML = state.bundleDraftTemplates.map((t, i) => `
+        <div class="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5 mb-1">
+          <span class="font-impact italic uppercase text-sm">${t.name}</span>
+          <button onclick="state.bundleDraftTemplates.splice(${i}, 1); renderBundleDraft();" class="text-red-500"><i data-lucide="minus-circle"></i></button>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function openBundleTemplatePicker() {
+      const picker = document.getElementById('template-picker');
+      picker.classList.remove('hidden');
+
+      document.getElementById('template-picker-list').innerHTML = state.templates.map(t => `
+        <button onclick="addTemplateToBundle('${t.id}', '${String(t.name).replace(/'/g, "\\'")}')" class="w-full bento-card p-4 text-left mb-2">
+          <p class="font-impact italic uppercase text-white">${t.name}</p>
+        </button>
+      `).join('');
+    }
+
+    function addTemplateToBundle(id, name) {
+      state.bundleDraftTemplates.push({ id, name });
+      document.getElementById('template-picker').classList.add('hidden');
+      renderBundleDraft();
+    }
+
+    async function saveBundle() {
+      const name = document.getElementById('bundle-creator-name').value.trim();
+      if (!name || state.bundleDraftTemplates.length === 0) return;
+
+      await post('saveBundle', {
+        bundleId: state.editingBundleId,
+        bundleName: name,
+        templateIds: state.bundleDraftTemplates
+      });
+
+      state.editingBundleId = null;
+      await refreshBootstrap();
+      setAdminSubView('bundles');
+    }
+
+    // --- PICKERS ---
+    function openExercisePicker() { document.getElementById('exo-picker').classList.remove('hidden'); renderPickerList(); }
+    function closePicker() { document.getElementById('exo-picker').classList.add('hidden'); }
+    function setPickerTab(t) { state.activeTab = t; renderPickerList(); }
+    function filterPicker() { renderPickerList(); }
+
+    async function renderPickerList() {
+      const list = document.getElementById('picker-list');
+      const search = document.getElementById('picker-search').value.toLowerCase();
+
+      let src = (state.activeTab === 'local') ? state.exercises : state.GLOBAL_DB;
+
+      if (state.activeTab === 'global' && state.GLOBAL_DB.length === 0) {
+        list.innerHTML = `<div class="py-10 text-center animate-pulse">Chargement Cloud...</div>`;
+        try {
+          const r = await fetch(`${SCRIPT_URL}?action=getGlobalLibrary`);
+          state.GLOBAL_DB = await r.json();
+          src = state.GLOBAL_DB;
+        } catch (e) {
+          console.error(e);
+          state.GLOBAL_DB = [];
+          src = [];
         }
-        window.onload = () => { lucide.createIcons(); };
-    </script>
+      }
+
+      list.innerHTML = src
+        .filter(e => String(e.name || e.exo || "").toLowerCase().includes(search))
+        .slice(0, 30)
+        .map(e => `
+          <div class="bento-card p-4 flex justify-between items-center mb-3">
+            <div class="flex items-center gap-4 cursor-pointer" onclick='showExoDetail(${JSON.stringify(e).replace(/'/g, "&apos;")})'>
+              <img src="${getFirstImg(e.gifUrl || e.illustrationUrl)}" class="w-12 h-12 rounded-xl object-cover">
+              <div><p class="font-impact italic text-lg uppercase leading-tight">${e.name || e.exo}</p></div>
+            </div>
+            <button onclick='importAndAddExercise(${JSON.stringify(e).replace(/'/g, "&apos;")})' class="w-10 h-10 bg-[#0BB005]/10 text-[#0BB005] rounded-xl flex items-center justify-center"><i data-lucide="plus"></i></button>
+          </div>
+        `).join('');
+
+      lucide.createIcons();
+    }
+
+    function importAndAddExercise(e) {
+      state.plannedExercises.push({
+        name: e.name || e.exo,
+        gifUrl: e.gifUrl || e.illustrationUrl,
+        instructions: e.instructions,
+        loadType: 'kg',
+        setsData: [{ type:'S', reps:'10', weight:60, rpe:'' }]
+      });
+
+      closePicker();
+      renderPlanned();
+
+      if (state.activeTab === 'global') post('importExercise', e).then(() => refreshBootstrap());
+    }
+
+    // --- TEMPLATE / BUNDLE PICKERS (assign) ---
+    function openTemplatePicker() {
+      const picker = document.getElementById('template-picker');
+      picker.classList.remove('hidden');
+
+      document.getElementById('template-picker-list').innerHTML = state.templates.map(t => `
+        <button onclick="applyTemplateToAthlete('${t.id}')" class="w-full bento-card p-5 text-left mb-3">
+          <p class="font-impact italic text-lg uppercase text-white">${t.name}</p>
+        </button>
+      `).join('');
+    }
+
+    function applyTemplateToAthlete(id) {
+      const t = state.templates.find(x => x.id === id);
+      if (!t) return;
+
+      state.plannedExercises = JSON.parse(JSON.stringify(t.exercises));
+      document.getElementById('admin-program-name').value = t.name;
+      document.getElementById('selected-athlete-name-display').innerText = state.selectedAthlete?.name?.toUpperCase() || '---';
+      document.getElementById('template-picker').classList.add('hidden');
+      document.getElementById('creator-title').innerText = "Déploiement";
+
+      state.editingTemplateId = null; // important: c'est un déploiement, pas une édition
+      setAdminSubView('creator');
+      renderPlanned();
+    }
+
+    function openBundlePicker() {
+      const picker = document.getElementById('bundle-picker');
+      picker.classList.remove('hidden');
+
+      document.getElementById('bundle-picker-list').innerHTML = state.bundles.map(b => `
+        <button onclick="assignBundleToAthlete('${b.id}')" class="w-full bento-card p-5 text-left mb-3">
+          <p class="font-impact italic text-lg uppercase text-white">${b.name}</p>
+        </button>
+      `).join('');
+    }
+
+    async function assignBundleToAthlete(id) {
+      document.getElementById('bundle-picker').classList.add('hidden');
+
+      customConfirm("Déployer le Pack ?", "Ceci ajoutera toutes les séances.", async () => {
+        await post('assignBundle', { bundleId: id, userEmail: state.selectedAthlete.email, coachEmail: state.user.email });
+        fetchAthleteProgram();
+      });
+    }
+
+    // --- EXO DETAIL ---
+    function showExoDetail(e) {
+      const mod = document.getElementById('exo-detail-modal');
+      const cnt = document.getElementById('exo-detail-content');
+
+      cnt.innerHTML = `
+        <div class="text-center space-y-4">
+          <h2 class="text-3xl italic font-impact uppercase leading-none text-white">${e.name || e.exo}</h2>
+          <p class="text-[#0BB005] font-black uppercase text-xs tracking-widest">${e.muscle || '---'}</p>
+        </div>
+        <img src="${getFirstImg(e.gifUrl || e.illustrationUrl)}" class="w-full rounded-3xl overflow-hidden shadow-2xl border border-white/10 mb-6">
+        <div class="bento-card p-6 space-y-4 border-white/10 text-left">
+          <h3 class="text-xs font-black uppercase tracking-[0.2em] text-gray-500">Instructions</h3>
+          <div class="text-sm text-gray-300 leading-relaxed space-y-3 italic">${(e.instructions || "Indisponible.").split('\n').map(l => `<p>${l}</p>`).join('')}</div>
+        </div>
+      `;
+
+      mod.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeExoDetail() { document.getElementById('exo-detail-modal').classList.add('hidden'); }
+    function openExerciseLibrary() { state.activeTab = 'local'; openExercisePicker(); }
+
+    window.onload = () => { lucide.createIcons(); };
+  </script>
 </body>
 </html>
