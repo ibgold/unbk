@@ -5,19 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Unbreakable Coaching | Cockpit</title>
     
-    <!-- SUPPORT PWA & IOS ADD TO HOME SCREEN -->
-    <meta name="mobile-web-app-capable" content="yes">
+    <!-- CONFIGURATION PWA INSTALLABLE -->
+    <link rel="manifest" href="/unbk/manifest.webmanifest">
+    <meta name="theme-color" content="#0BB005">
+    
+    <!-- META IOS APPLE -->
+    <link rel="apple-touch-icon" href="/unbk/logo.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Unbreakable">
-    <meta name="theme-color" content="#050505">
-    
-    <!-- ICONES -->
-    <link rel="apple-touch-icon" href="logo.png">
-    <link rel="icon" type="image/png" href="logo.png">
-
-    <!-- MANIFEST INLINE (POUR ANDROID/CHROME) -->
-    <link rel="manifest" href='data:application/manifest+json,{"name":"Unbreakable Coaching","short_name":"Unbreakable","start_url":".","display":"standalone","background_color":"#050505","theme_color":"#0BB005","icons":[{"src":"logo.png","sizes":"192x192","type":"image/png"}]}'>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -34,12 +30,10 @@
             margin: 0; 
             padding: 0; 
             overflow-x: hidden;
-            /* Gestion des zones sécurisées iOS pour le plein écran */
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
         }
 
-        /* Ajustement du header pour ne pas être sous l'encoche */
         header {
             padding-top: calc(1.5rem + env(safe-area-inset-top));
             top: 0;
@@ -73,7 +67,6 @@
         .tab-btn.active { background: rgba(11, 176, 5, 0.1); color: var(--primary); }
         .pack-header { background: linear-gradient(90deg, rgba(11,176,5,0.1) 0%, transparent 100%); border-left: 3px solid var(--primary); padding: 8px 16px; margin-bottom: 12px; border-radius: 0 12px 12px 0; }
         
-        /* Ajustement de la nav basse pour la safe area */
         .fixed-bottom-nav {
             bottom: calc(1.5rem + env(safe-area-inset-bottom));
         }
@@ -256,13 +249,12 @@
         const SET_TYPES = { 'S': { label: 'S', class: 'badge-s' }, 'W': { label: 'W', class: 'badge-w' }, 'D': { label: 'D', class: 'badge-d' }, 'F': { label: 'F', class: 'badge-f' } };
         const LOAD_UNITS = [{ id: 'kg', label: 'KG' }, { id: 'percent', label: '%' }, { id: 'rpe', label: 'RPE' }, { id: 'bw', label: 'BW' }];
 
-        // ENREGISTREMENT SERVICE WORKER POUR PWA (INLINE)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swCode = `self.addEventListener('fetch', function(event) {});`;
-                const blob = new Blob([swCode], { type: 'text/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-                navigator.serviceWorker.register(swUrl).catch(err => console.log('SW registration failed:', err));
+        // ENREGISTREMENT SERVICE WORKER PWA (GH PAGES COMPATIBLE)
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/unbk/sw.js", { scope: "/unbk/" })
+                    .then(reg => console.log('SW Registered', reg))
+                    .catch(err => console.log('SW Registration Failed', err));
             });
         }
 
